@@ -77,16 +77,3 @@ To use the EntroDrop project, follow these steps:
 - Enhanced efficiency while maintaining performance.
 - Empirical analysis of entropy trends in hidden representations.
 
-## Evaluation Results
-[Provide a summary of the evaluation results and performance metrics.]
-
-## Contributing
-[Provide guidelines for contributing to the project.]
-
-## License
-[Provide information about the project's license.]
-
-## Contact Information
-[Provide contact information for the maintainers or contributors.]
-
-

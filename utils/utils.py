@@ -1,7 +1,7 @@
 import random
 import numpy as np
 import torch
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 def fix_seed(seed: int):
     random.seed(seed)
@@ -70,10 +70,11 @@ def get_c4(nsamples, seed, seqlen, tokenizer):
     # traindata = load_dataset('allenai/c4', 'allenai--c4', data_files={'train': 'en/c4-train.00000-of-01024.json.gz'}, split='train')
     # valdata = load_dataset('allenai/c4', 'allenai--c4', data_files={'validation': 'en/c4-validation.00000-of-00008.json.gz'}, split='validation')
 
-    dataset = load_dataset('json', data_files={'train': 'https://huggingface.co/datasets/allenai/c4/resolve/main/en/c4-train.00000-of-01024.json.gz', 'validation': 'https://huggingface.co/datasets/allenai/c4/resolve/main/en/c4-validation.00000-of-00008.json.gz'})
-    traindata = dataset['train']
-    valdata = dataset['validation']
-
+    # dataset = load_dataset('json', data_files={'train': 'https://huggingface.co/datasets/allenai/c4/resolve/main/en/c4-train.00000-of-01024.json.gz', 'validation': 'https://huggingface.co/datasets/allenai/c4/resolve/main/en/c4-validation.00000-of-00008.json.gz'})
+    # traindata = dataset['train']
+    # valdata = dataset['validation']
+    traindata = load_from_disk("datasets/c4/train")
+    valdata = load_from_disk("datasets/c4/validation")
 
     # Generate samples from training set
     random.seed(seed)

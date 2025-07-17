@@ -308,7 +308,7 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
             hidden_states = residual
         else:
             # Self Attention
-            hidden_states, self_attn_weights = self.self_attn(
+            hidden_states, self_attn_weights, _ = self.self_attn(
                 hidden_states=hidden_states,
                 attention_mask=attention_mask,
                 position_ids=position_ids,

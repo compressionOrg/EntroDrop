@@ -2,7 +2,7 @@ import argparse
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_path", type=str, default="/export/share/liangweiyang/AttentionReuse/Llama3-8B-Instruct")
+    parser.add_argument("--model_path", type=str, default="/home/zhangyingying/.cache/huggingface/hub/models--meta-llama--Llama-3.1-8B/model")
     parser.add_argument("--save_path", type=str, default="./layer_seq.txt")
     parser.add_argument("--dataset", type=str, default="c4")
     parser.add_argument("--num_samples", type=int, default=128)

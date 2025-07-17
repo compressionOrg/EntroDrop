@@ -34,6 +34,15 @@ def main():
         f.write(args.label)
         f.write(" ")
         f.write(str(layer_seq))
+    
+    # pruned_model = copy.deepcopy(model)
+    # layers_to_remove = [25, 24, 26, 23, 27, 28, 22]
+
+    # for layer_idx in sorted(layers_to_remove, reverse=True):
+    #     try:
+    #         del pruned_model.model.layers[layer_idx]
+    #     except IndexError:
+    #         print(f"layer {layer_idx} does not exist, function may have already been called")
 
 if __name__ == "__main__":
     main()

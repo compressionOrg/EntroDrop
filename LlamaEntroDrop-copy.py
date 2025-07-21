@@ -114,28 +114,148 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
         self.self_attn = LlamaAttentionDrop(config=config, layer_idx=layer_idx)
         self.layer_idx = layer_idx
 
-    def compute_rrc(self, h_prev: torch.Tensor, h_curr: torch.Tensor) -> float:
-        """Computes the Relative Residual Contribution (RRC).
 
-        Args:
-            h_prev: The hidden state before the block.
-            h_curr: The hidden state after the block.
-
-        Returns:
-            The RRC score as a float.
+    def estimate_entropy_knn_pytorch(self, data, k=5):
         """
-        # Ensure tensors are detached and on CPU for calculation
-        h_prev = h_prev.detach().to(torch.float32)
-        h_curr = h_curr.detach().to(torch.float32)
+        使用 PyTorch GPU 并行化 kNN 熵估计
+        """
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        batch_size, sequence_length, hidden_dim = data.shape
+        flattened_data = data.reshape(-1, hidden_dim).float().to(device)
 
-        # RRC = ||h_{l+1} - h_l||₂ / ||h_l||₂
-        update_norm = torch.linalg.norm(h_curr - h_prev)
-        input_norm = torch.linalg.norm(h_prev)
+        # 🔧 计算距离矩阵（L2 距离）
+        dist_matrix = torch.cdist(flattened_data, flattened_data, p=2)
 
-        # Add a small epsilon to avoid division by zero
-        rrc_score = update_norm / (input_norm + 1e-10)
+        # 🔧 取 k+1 最小距离（去掉自己）
+        knn_distances, _ = torch.topk(dist_matrix, k + 1, largest=False)
+        radii = knn_distances[:, 1:]  # 去掉自身距离
 
-        return rrc_score.item()
+        avg_log_radius = torch.mean(torch.log(radii[:, -1] + 1e-10))
+        n = flattened_data.shape[0]
+        d = hidden_dim
+
+        # 🔧 熵计算（数值稳定）
+        entropy = (d * avg_log_radius) + (d / 2) * torch.log(torch.tensor(np.pi)) - torch.lgamma(torch.tensor(d / 2 + 1)) + torch.log(torch.tensor(n)) - torch.log(torch.tensor(k))
+        return entropy.item()
+
+
+    def compute_information_gain_fixed(self, X, Y, k=25):
+        """
+        修正后的信息增益计算 IG = H(X + f(X)) - H(X)
+        """
+        entropy_X = self.estimate_entropy_knn_pytorch(X, k)
+        entropy_X_fX = self.estimate_entropy_knn_pytorch(Y, k)
+        
+        information_gain = entropy_X_fX - entropy_X
+        return information_gain, entropy_X_fX
+
+
+    def compute_entropy_marginal_binning_gpu_parallel(self, tensor, num_bins=10):
+        """
+        使用 PyTorch 在 GPU 上进行多维并行分桶计算熵
+        :param tensor: 输入张量 (batch_size, seq_length, embed_dim)
+        :param num_bins: 每个维度的分桶数
+        :return: 总熵
+        """
+        device = torch.device("cuda:0")
+        tensor = tensor.to(device)
+
+        batch_size, seq_length, embed_dim = tensor.shape
+
+        # 展平数据 (batch_size * seq_length, embed_dim)
+        flattened_data = tensor.view(-1, embed_dim)  # (N, D)
+
+        # 并行计算每个维度的最小值和最大值
+        min_vals, _ = flattened_data.min(dim=0, keepdim=True)  # (1, D)
+        max_vals, _ = flattened_data.max(dim=0, keepdim=True)  # (1, D)
+
+        # 创建每个维度的分桶边界（批量生成）
+        bin_edges = torch.linspace(0, 1, num_bins + 1, device=device).unsqueeze(1)  # (B+1, 1)
+        bin_edges = min_vals + bin_edges * (max_vals - min_vals)  # (B+1, D)
+
+        # 使用广播机制将数据与分桶边界比较（并行化分桶）
+        expanded_data = flattened_data.unsqueeze(0)  # (1, N, D)
+        expanded_edges = bin_edges.unsqueeze(1)      # (B+1, 1, D)
+
+        # 数据点分桶（digitized）
+        digitized = torch.sum(expanded_data >= expanded_edges[:-1], dim=0) - 1  # (N, D)
+
+        # 计算每个维度的分桶频数（批量计算）
+        one_hot_bins = torch.nn.functional.one_hot(digitized, num_bins).float()  # (N, D, B)
+        bin_counts = one_hot_bins.sum(dim=0)  # (D, B)
+
+        # 计算概率密度
+        probs = bin_counts / bin_counts.sum(dim=1, keepdim=True)  # (D, B)
+        probs = torch.clamp(probs, min=1e-10)  # 避免 log(0)
+
+        # 并行计算每个维度的熵
+        entropy_per_dim = -torch.sum(probs * torch.log(probs), dim=1)  # (D,)
+
+        # 累加所有维度的熵
+        total_entropy = entropy_per_dim.sum()
+
+        return total_entropy.item(), entropy_per_dim.cpu().numpy()
+
+
+    def compute_information_gain_marginal_binning(self, X, Y, num_bins=20):
+        """
+        计算信息增益：IG = H(X + f(X)) - H(X)
+        :param X: 原始张量 (batch_size, seq_length, embed_dim)
+        :param f_X: 变换后的张量 (batch_size, seq_length, embed_dim)
+        :param num_bins: 每个维度的分桶数
+        :return: 信息增益
+        """
+        entropy_X, entropy_X_d = self.compute_entropy_marginal_binning_gpu_parallel(X, num_bins)
+        entropy_Y, entropy_Y_d = self.compute_entropy_marginal_binning_gpu_parallel(Y, num_bins)
+
+        IG = entropy_Y - entropy_X
+        IG_d = entropy_Y_d - entropy_X_d
+        return IG, entropy_Y_d
+    
+
+    def compute_cosine_importance(self, X, Y):
+        cos_sim = F.cosine_similarity(X, Y, dim=-1)
+        score = 1 - float(torch.mean(cos_sim).detach().cpu())
+        return score, 0
+    
+
+    def renyi_entropy(self, tensor, alpha=4.0):
+        batch_size, seq_length, embed_dim = tensor.shape
+        
+        # 数据标准化
+        X = tensor.view(-1, embed_dim)
+        X = (X - X.mean(dim=0)) / (X.std(dim=0) + 1e-10)
+        
+        # 计算距离并添加缩放
+        pairwise_dist = torch.cdist(X, X)
+        sigma = torch.median(pairwise_dist)
+        kernel_matrix = torch.exp(-pairwise_dist ** 2 / (2 * sigma ** 2))
+        kernel_matrix = torch.clamp(kernel_matrix, min=1e-10)
+        
+        if alpha == 1.0:
+            row_sums = torch.sum(kernel_matrix, dim=1, keepdim=True)
+            probs = kernel_matrix / (row_sums + 1e-10)
+            log_probs = torch.log(probs + 1e-10)
+            entropy = -torch.sum(probs * log_probs) / X.shape[0]  # 归一化
+        else:
+            kernel_mean = torch.mean(kernel_matrix ** (alpha - 1))
+            kernel_mean = torch.clamp(kernel_mean, min=1e-10)
+            entropy = 1 / (1 - alpha) * torch.log(kernel_mean)
+        
+        # 添加最终检查
+        if torch.isnan(entropy):
+            print("WARNING: NaN detected in final entropy!")
+            return 0.0
+        
+        return entropy.item()
+
+
+    def information_gain_renyi(self, X, Y):
+        entropy_X = self.renyi_entropy(X)
+        entropy_Y = self.renyi_entropy(Y)
+        IG = entropy_Y - entropy_X
+        return IG, 0
+
 
     def forward(
         self,
@@ -178,8 +298,9 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
         if drop_layer:
             return (hidden_states,), 0, 0, 0, 0, 0
         
-        orig_input = hidden_states
         residual = hidden_states
+
+        orig_input = hidden_states
 
         hidden_states = self.input_layernorm(hidden_states)
 
@@ -201,8 +322,8 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
 
             hidden_states = residual + hidden_states
 
-        # Calculate RRC for the Attention block
-        rrc_attn = self.compute_rrc(residual, hidden_states)
+        score_attn, _ = self.compute_information_gain_fixed(residual.detach(), hidden_states.detach())
+        
 
         # Fully Connected
         residual = hidden_states
@@ -210,15 +331,15 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
         hidden_states = self.mlp(hidden_states)
         hidden_states = residual + hidden_states
 
-        # Calculate RRC for the entire Layer
-        rrc_layer = self.compute_rrc(orig_input, hidden_states)
+        score_layer, _ = self.compute_information_gain_fixed(orig_input, hidden_states)
+
 
         outputs = (hidden_states,)
 
         if output_attentions:
             outputs += (self_attn_weights,)
 
-        return outputs, rrc_layer, rrc_attn
+        return outputs, score_layer, score_attn
 
 
 class LlamaModelDrop(LlamaModel):
@@ -290,8 +411,9 @@ class LlamaModelDrop(LlamaModel):
         all_hidden_states = () if output_hidden_states else None
         all_self_attns = () if output_attentions else None
 
-        rrc_scores_attn = []
-        rrc_scores_layer = []
+        drop_score_list = []
+        drop_score_list_layer = []
+        entropy_y_d_list = []
 
         for i, decoder_layer in enumerate(self.layers):
             if output_hidden_states:
@@ -302,7 +424,7 @@ class LlamaModelDrop(LlamaModel):
             drop_attention = False
             drop_layer = False
 
-            layer_outputs, rrc_layer, rrc_attn = decoder_layer(
+            layer_outputs, drop_score_layer, drop_score_attn = decoder_layer(
                 hidden_states,
                 attention_mask=causal_mask,
                 position_ids=position_ids,
@@ -315,8 +437,8 @@ class LlamaModelDrop(LlamaModel):
                 position_embeddings=position_embeddings,
             )
 
-            rrc_scores_attn.append(rrc_attn)
-            rrc_scores_layer.append(rrc_layer)
+            drop_score_list.append(drop_score_attn)
+            drop_score_list_layer.append(drop_score_layer)
 
             hidden_states = layer_outputs[0]
 
@@ -334,7 +456,7 @@ class LlamaModelDrop(LlamaModel):
             attentions=all_self_attns,
         )
 
-        return output, rrc_scores_layer, rrc_scores_attn
+        return output, drop_score_list
 
 
     
@@ -376,8 +498,7 @@ class LlamaForCausalLMDrop(LlamaForCausalLM):
         )
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
-        # model_outputs will be a tuple: (last_hidden_state, rrc_scores_layer, rrc_scores_attn)
-        model_outputs = self.model(
+        outputs = self.model(
             input_ids=input_ids,
             attention_mask=attention_mask,
             position_ids=position_ids,
@@ -391,7 +512,7 @@ class LlamaForCausalLMDrop(LlamaForCausalLM):
             **kwargs,
         )
 
-        hidden_states = model_outputs[0]
+        hidden_states = outputs[0]
         
         logits = self.lm_head(hidden_states[:, -num_logits_to_keep:, :])
 
@@ -399,81 +520,55 @@ class LlamaForCausalLMDrop(LlamaForCausalLM):
         if labels is not None:
             loss = self.loss_function(logits=logits, labels=labels, vocab_size=self.config.vocab_size, **kwargs)
 
-        # The final output tuple that is returned by the model
-        output_tuple = (logits,) + model_outputs[1:]
-
         if not return_dict:
-            return (loss,) + output_tuple if loss is not None else output_tuple
-
-        # The BaseModelOutputWithPast object from the model forward pass
-        base_model_output = model_outputs[0]
-        if not isinstance(base_model_output, BaseModelOutputWithPast):
-             # if return_dict=False, model_outputs[0] is just hidden_states
-             base_model_output = BaseModelOutputWithPast(
-                last_hidden_state=model_outputs[0],
-                past_key_values=model_outputs[1] if len(model_outputs) > 1 else None,
-                hidden_states=model_outputs[2] if len(model_outputs) > 2 else None,
-                attentions=model_outputs[3] if len(model_outputs) > 3 else None,
-            )
-
+            output = (logits,) + outputs[1:]
+            return (loss,) + output if loss is not None else output
 
         return CausalLMOutputWithPast(
             loss=loss,
             logits=logits,
-            past_key_values=base_model_output.past_key_values,
-            hidden_states=base_model_output.hidden_states,
-            attentions=base_model_output.attentions,
+            past_key_values=outputs.past_key_values,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
         )
 
 
 
 
     def process_layers(self, dataloader):
-        rrc_scores_layer = [0 for _ in range(self.config.num_hidden_layers)]
-        rrc_scores_attn = [0 for _ in range(self.config.num_hidden_layers)]
-
+        norms = [0 for _ in range(self.config.num_hidden_layers)]
         for batch in tqdm(dataloader):
 
             inputs = {}
             inputs["input_ids"] = batch[0].cuda()
-            # The model forward now returns a tuple where the last two elements are our RRC scores
             outputs = self.model(**inputs, output_attentions=False)
             
-            layer_scores = outputs[-2]
-            attn_scores = outputs[-1]
+            attention_drop_score = outputs[-1]
+            for i in range(len(norms)):
+                norms[i] += attention_drop_score[i]
 
-            for i in range(len(rrc_scores_layer)):
-                rrc_scores_layer[i] += layer_scores[i]
-                rrc_scores_attn[i] += attn_scores[i]
-
-        rrc_scores_layer = [score / len(dataloader) for score in rrc_scores_layer]
-        rrc_scores_attn = [score / len(dataloader) for score in rrc_scores_attn]
-
-        print("Layer RRC Scores:", rrc_scores_layer)
-        print("Attention RRC Scores:", rrc_scores_attn)
+        norms = [norm / len(dataloader) for norm in norms]
 
         # get the first two layers and last layer norm to be inf 
-        # We will use the layer RRC scores for pruning decisions
-        scores_for_ranking = rrc_scores_layer
-        scores_for_ranking[0] = float('inf')
-        scores_for_ranking[1] = float('inf')
-        scores_for_ranking[-1] = float('inf')
+        norms[0] = float('inf')
+        norms[1] = float('inf')
+        norms[-1] = float('inf')
         
 
         # 排序时先按 norm 排序，相同时按索引排序
-        sorted_scores = sorted(enumerate(scores_for_ranking), key=lambda x: (x[1], x[0]))
+        sorted_norms = sorted(enumerate(norms), key=lambda x: (x[1], x[0]))
 
         # 分配唯一排名
-        ranks = {idx: rank for rank, (idx, _) in enumerate(sorted_scores)}
+        ranks = {idx: rank for rank, (idx, _) in enumerate(sorted_norms)}
 
         # 转换为排名顺序
-        drop_layers_order = [ranks[i] for i in range(len(scores_for_ranking))]
+        drop_layers_order = [ranks[i] for i in range(len(norms))]
 
         self.model.drop_layers_order = drop_layers_order
 
         self.config.drop_layers_order = self.model.drop_layers_order
 
-        drop_layers_order_str = "_".join([str(i) for i in drop_layers_order])
-        print(drop_layers_order_str)
-        return drop_layers_order_str
+        drop_layers_order = "_".join([str(i) for i in drop_layers_order])
+        print(drop_layers_order)
+        return drop_layers_order
 

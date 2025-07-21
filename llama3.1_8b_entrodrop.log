@@ -1,0 +1,109 @@
+layers_order="29,30,28,26,18,16,17,24,6,20,22,4,19,15,25,27,23,7,8,0,3,13,10,5,14,21,1,12,2,9,11,31"
+
+
++ echo 'Running with num_prune=4'
+2025-07-21 09:11:16,246 - evaluate_grasp - INFO - wikitext2 35.03701400756836
+2025-07-21 09:11:16,246 - evaluate_grasp - INFO - load dataset ptb
+100%|███████████████████████████████████████████████████████████████████████████████████████████████| 42/42 [00:14<00:00,  2.94it/s]
+2025-07-21 09:11:30,860 - evaluate_grasp - INFO - ptb 52.918338775634766
+  0%|                                                                                                     | 0/83947 [00:00<?, ?it/s]
+Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be F
+P32)
+100%|███████████████████████████████████████████████████████████████████████████████████████| 83947/83947 [1:25:18<00:00, 16.40it/s]
+2025-07-21 10:38:21,258 - evaluate_grasp - INFO - {'wikitext2': 35.03701400756836, 'ptb': 52.918338775634766, 'mathqa': {'acc': 0.33
+06532663316583, 'acc_stderr': 0.008612169591864846, 'acc_norm': 0.33869346733668343, 'acc_norm_stderr': 0.008663739930566804}, 'piqa
+': {'acc': 0.7257889009793254, 'acc_stderr': 0.010408618664933379, 'acc_norm': 0.73449401523395, 'acc_norm_stderr': 0.01030330865302
+443}, 'hellaswag': {'acc': 0.40908185620394344, 'acc_stderr': 0.004906595857916754, 'acc_norm': 0.5597490539733121, 'acc_norm_stderr
+': 0.004954026775425769}, 'winogrande': {'acc': np.float64(0.6464088397790055), 'acc_stderr': 0.013436541262599954}, 'arc_easy': {'a
+cc': 0.6127946127946128, 'acc_stderr': 0.009995312065890351, 'acc_norm': 0.5921717171717171, 'acc_norm_stderr': 0.010083950240041214
+}, 'arc_challenge': {'acc': 0.38822525597269625, 'acc_stderr': 0.014241614207414028, 'acc_norm': 0.4087030716723549, 'acc_norm_stder
+r': 0.014365750345427006}, 'openbookqa': {'acc': 0.294, 'acc_stderr': 0.020395095484936607, 'acc_norm': 0.398, 'acc_norm_stderr': 0.
+021912377885779967}, 'boolq': {'acc': 0.6220183486238532, 'acc_stderr': 0.008480656964585243}, 'mean': np.float64(0.5036213850856369
+)}
+2025-07-21 10:38:21,260 - evaluate_grasp - INFO -
+
+===== mean acc: 0.5036213850856369 =====
+
++ echo 'Running with num_prune=8'
++ python run_rm_layers.py --layers_to_remove 29,30,28,26,18,16,17,24,6,20,22,4,19,15,25,27,23,7,8,0,3,13,10,5,14,21,1,12,2,9,11,31 -
+-num_prune 8
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████| 4/4 [00:05<00:00,  1.28s/it]
+2025-07-21 10:38:33,439 - evaluate_grasp - INFO - load dataset wikitext2
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this se
+quence through the model will result in indexing errors
+100%|█████████████████████████████████████████████████████████████████████████████████████████████| 141/141 [01:43<00:00,  1.36it/s]
+2025-07-21 10:40:18,423 - evaluate_grasp - INFO - wikitext2 72.45914459228516
+2025-07-21 10:40:18,423 - evaluate_grasp - INFO - load dataset ptb
+100%|███████████████████████████████████████████████████████████████████████████████████████████████| 42/42 [00:33<00:00,  1.26it/s]
+2025-07-21 10:40:52,040 - evaluate_grasp - INFO - ptb 84.53182220458984 
+  0%|                                                                                                     | 0/83947 [00:00<?, ?it/s]
+Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be F
+P32)
+100%|███████████████████████████████████████████████████████████████████████████████████████| 83947/83947 [1:17:22<00:00, 18.08it/s]
+2025-07-21 11:59:58,385 - evaluate_grasp - INFO - {'wikitext2': 72.45914459228516, 'ptb': 84.53182220458984, 'mathqa': {'acc': 0.253
+9363484087102, 'acc_stderr': 0.007968030108429303, 'acc_norm': 0.2646566164154104, 'acc_norm_stderr': 0.00807582804382805}, 'piqa':
+{'acc': 0.6877040261153428, 'acc_stderr': 0.010812581599154424, 'acc_norm': 0.6942328618063112, 'acc_norm_stderr': 0.010749627366141
+632}, 'hellaswag': {'acc': 0.3988249352718582, 'acc_stderr': 0.0048865590087549884, 'acc_norm': 0.5321649073889664, 'acc_norm_stderr
+': 0.004979446038824758}, 'winogrande': {'acc': np.float64(0.65982636148382), 'acc_stderr': 0.013315218762417399}, 'arc_easy': {'acc
+': 0.5370370370370371, 'acc_stderr': 0.010231597249131053, 'acc_norm': 0.5138888888888888, 'acc_norm_stderr': 0.010255824507190345},
+ 'arc_challenge': {'acc': 0.3378839590443686, 'acc_stderr': 0.01382204792228351, 'acc_norm': 0.35580204778157, 'acc_norm_stderr': 0.
+01399057113791876}, 'openbookqa': {'acc': 0.24, 'acc_stderr': 0.019118866653759736, 'acc_norm': 0.344, 'acc_norm_stderr': 0.02126575
+803797874}, 'boolq': {'acc': 0.6211009174311927, 'acc_stderr': 0.008484678718565017}, 'mean': np.float64(0.46703919809904115)}
+2025-07-21 11:59:58,386 - evaluate_grasp - INFO -
+
+===== mean acc: 0.46703919809904115 =====
+
+2025-07-21 12:00:09,922 - evaluate_grasp - INFO - load dataset wikitext2
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this se
+quence through the model will result in indexing errors
+100%|█████████████████████████████████████████████████████████████████████████████████████████████| 141/141 [01:30<00:00,  1.57it/s]
+2025-07-21 12:01:40,909 - evaluate_grasp - INFO - wikitext2 322.00701904296875
+2025-07-21 12:01:40,909 - evaluate_grasp - INFO - load dataset ptb
+100%|███████████████████████████████████████████████████████████████████████████████████████████████| 42/42 [00:28<00:00,  1.48it/s]
+2025-07-21 12:02:09,580 - evaluate_grasp - INFO - ptb 300.58465576171875
+  0%|                                                                                                     | 0/83947 [00:00<?, ?it/s]
+Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be F
+P32)
+100%|███████████████████████████████████████████████████████████████████████████████████████| 83947/83947 [1:07:44<00:00, 20.66it/s]
+2025-07-21 13:11:29,774 - evaluate_grasp - INFO - {'wikitext2': 322.00701904296875, 'ptb': 300.58465576171875, 'mathqa': {'acc': 0.2
+1909547738693466, 'acc_stderr': 0.007572098697066916, 'acc_norm': 0.23417085427135678, 'acc_norm_stderr': 0.007752342577747439}, 'pi
+qa': {'acc': 0.6213275299238302, 'acc_stderr': 0.011317163404516847, 'acc_norm': 0.6186071817192601, 'acc_norm_stderr': 0.0113328504
+0652868}, 'hellaswag': {'acc': 0.33419637522405893, 'acc_stderr': 0.004707447244200626, 'acc_norm': 0.4062935670185222, 'acc_norm_st
+derr': 0.0049013686295334155}, 'winogrande': {'acc': np.float64(0.5880031570639306), 'acc_stderr': 0.013833112857645928}, 'arc_easy'
+: {'acc': 0.42508417508417506, 'acc_stderr': 0.010143966195717842, 'acc_norm': 0.38762626262626265, 'acc_norm_stderr': 0.00999730791
+4447608}, 'arc_challenge': {'acc': 0.23464163822525597, 'acc_stderr': 0.012383873560768668, 'acc_norm': 0.26535836177474403, 'acc_no
+rm_stderr': 0.012902554762313966}, 'openbookqa': {'acc': 0.204, 'acc_stderr': 0.018039369104138663, 'acc_norm': 0.292, 'acc_norm_std
+err': 0.020354375480530082}, 'boolq': {'acc': 0.5155963302752293, 'acc_stderr': 0.008740799550176545}, 'mean': np.float64(0.39274308
+53979269)}
+2025-07-21 13:11:29,776 - evaluate_grasp - INFO -
+
+===== mean acc: 0.3927430853979269 =====
+
+
++ python run_rm_layers.py --layers_to_remove 29,30,28,26,18,16,17,24,6,20,22,4,19,15,25,27,23,7,8,0,3,13,10,5,14,21,1,12,2,9,11,31 -
+-num_prune 16
+Loading checkpoint shards: 100%|██████████████████████████████████████████████████████████████████████| 4/4 [00:05<00:00,  1.37s/it]
+2025-07-21 13:11:41,383 - evaluate_grasp - INFO - load dataset wikitext2
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this se
+quence through the model will result in indexing errors
+100%|█████████████████████████████████████████████████████████████████████████████████████████████| 141/141 [01:05<00:00,  2.15it/s]
+2025-07-21 13:12:48,054 - evaluate_grasp - INFO - wikitext2 18591.869140625
+2025-07-21 13:12:48,054 - evaluate_grasp - INFO - load dataset ptb
+100%|███████████████████████████████████████████████████████████████████████████████████████████████| 42/42 [00:22<00:00,  1.90it/s]
+2025-07-21 13:13:10,390 - evaluate_grasp - INFO - ptb 10137.1171875
+  0%|                                                                                                     | 0/83947 [00:00<?, ?it/s]
+Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be F
+P32)
+100%|███████████████████████████████████████████████████████████████████████████████████████| 83947/83947 [1:00:06<00:00, 23.28it/s]
+2025-07-21 14:15:23,322 - evaluate_grasp - INFO - {'wikitext2': 18591.869140625, 'ptb': 10137.1171875, 'mathqa': {'acc': 0.193969849
+24623115, 'acc_stderr': 0.007238412826802101, 'acc_norm': 0.20402010050251257, 'acc_norm_stderr': 0.0073771416005697235}, 'piqa': {'
+acc': 0.5174102285092492, 'acc_stderr': 0.011658749823107691, 'acc_norm': 0.5054406964091404, 'acc_norm_stderr': 0.01166513350063706
+}, 'hellaswag': {'acc': 0.23471420035849433, 'acc_stderr': 0.004229538929090428, 'acc_norm': 0.20274845648277234, 'acc_norm_stderr':
+ 0.004012249939174915}, 'winogrande': {'acc': np.float64(0.526440410418311), 'acc_stderr': 0.014032823874407225}, 'arc_easy': {'acc'
+: 0.2718855218855219, 'acc_stderr': 0.009129795867310496, 'acc_norm': 0.27525252525252525, 'acc_norm_stderr': 0.009164888895174743},
+ 'arc_challenge': {'acc': 0.21928327645051193, 'acc_stderr': 0.012091245787615725, 'acc_norm': 0.25341296928327645, 'acc_norm_stderr
+': 0.012710896778378606}, 'openbookqa': {'acc': 0.164, 'acc_stderr': 0.016575811142446686, 'acc_norm': 0.28, 'acc_norm_stderr': 0.02
+0099950647503237}, 'boolq': {'acc': 0.5434250764525994, 'acc_stderr': 0.008712010793695305}, 'mean': np.float64(0.3338910704151149)}
+2025-07-21 14:15:23,324 - evaluate_grasp - INFO -
+
+===== mean acc: 0.3338910704151149 =====

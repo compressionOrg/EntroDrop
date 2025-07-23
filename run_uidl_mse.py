@@ -9,26 +9,34 @@ from evaluate_grasp import evaluate_model
 from typing import Optional, List, Literal
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import torch.nn.functional as F
 
 
 def block_influence(
     input_hidden_state: torch.Tensor,
     output_hidden_state: torch.Tensor,
-    angular=False,
+    angular: bool = False,
+    metric: str = "angular_mse_combo",
 ):
     """
     input_hidden_state: B, S, D
     output_hidden_state: B, S, D
     """
     _, _, d = input_hidden_state.shape
-    input_hidden_state = input_hidden_state.reshape(-1, d)
-    output_hidden_state = output_hidden_state.reshape(-1, d)
+    input_hidden_state_flat = input_hidden_state.reshape(-1, d)
+    output_hidden_state_flat = output_hidden_state.reshape(-1, d)
 
-    norm_input = input_hidden_state.norm(dim=-1, keepdim=True)
-    norm_output = output_hidden_state.norm(dim=-1, keepdim=True)
+    sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
 
-    sim = (input_hidden_state @ output_hidden_state.T) / (norm_input * norm_output)
-    sim = sim.diagonal().nan_to_num(nan=0.5)
+    if metric == "angular_mse_combo" and angular:
+        # MSE part
+        mse = torch.mean((input_hidden_state_flat - output_hidden_state_flat) ** 2, dim=-1)
+        mse_norm = torch.sigmoid(mse)
+
+        # Angular distance part
+        angular_dist = torch.arccos(sim) / torch.pi  # Already in [0, 1]
+
+        return mse_norm + angular_dist
 
     if angular:
         return (torch.arccos(sim) / torch.pi)
@@ -42,6 +50,7 @@ def compute_bi(
         calibration_dataloader: Optional[DataLoader] = None,
         hiddens: Optional[List[torch.Tensor]] = None,
         angular: bool = False,
+        metric: str = "angular_mse_combo",
         device: Literal["cpu", "cuda"] = "cuda",
         *args, **kwargs
     ):
@@ -50,12 +59,13 @@ def compute_bi(
     Computes layer-wise importances over input tokens.
     """
     def compute_bi_hiddens(hiddens: Optional[List[torch.Tensor]] = None):
+        local_num_prune_layers = num_prune_layers
         if not angular:
-            num_prune_layers = 1
+            local_num_prune_layers = 1
 
-        for i in range(len(hiddens) - num_prune_layers):
+        for i in range(len(hiddens) - local_num_prune_layers):
             in_hidden = hiddens[i]
-            out_hidden = hiddens[i+num_prune_layers]
+            out_hidden = hiddens[i+local_num_prune_layers]
             if angular:
                 # use only last token for angular distance as described in section 3.2
                 # https://arxiv.org/pdf/2403.17887.pdf
@@ -65,7 +75,8 @@ def compute_bi(
             layer_importances[i] += block_influence(
                 in_hidden,
                 out_hidden,
-                angular=angular
+                angular=angular,
+                metric=metric
             ).mean().cpu().item()
 
     print(f"\n=======>Compute Block Influence")
@@ -125,14 +136,14 @@ if __name__ == "__main__":
     model.to(device=device)
     model.eval()
 
-    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, calibration_dataloader=calibration_dataloader, device=device)
+    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=True, metric="angular_mse_combo", calibration_dataloader=calibration_dataloader, device=device)
 
     all_layers_removal_order = np.argsort(np.array(layer_importances)).tolist()
     print(f"All layers removal order: {','.join(map(str, all_layers_removal_order))}")
 
-    remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=False)
+    remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=True)
 
     print(f"remove layers: {layers_to_remove}")
-    print(model)
+    # print(model)
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

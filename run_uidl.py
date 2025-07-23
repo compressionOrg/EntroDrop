@@ -50,12 +50,13 @@ def compute_bi(
     Computes layer-wise importances over input tokens.
     """
     def compute_bi_hiddens(hiddens: Optional[List[torch.Tensor]] = None):
+        local_num_prune_layers = num_prune_layers
         if not angular:
-            num_prune_layers = 1
+            local_num_prune_layers = 1
 
-        for i in range(len(hiddens) - num_prune_layers):
+        for i in range(len(hiddens) - local_num_prune_layers):
             in_hidden = hiddens[i]
-            out_hidden = hiddens[i+num_prune_layers]
+            out_hidden = hiddens[i+local_num_prune_layers]
             if angular:
                 # use only last token for angular distance as described in section 3.2
                 # https://arxiv.org/pdf/2403.17887.pdf
@@ -125,14 +126,14 @@ if __name__ == "__main__":
     model.to(device=device)
     model.eval()
 
-    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, calibration_dataloader=calibration_dataloader, device=device)
+    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=True, calibration_dataloader=calibration_dataloader, device=device)
 
     all_layers_removal_order = np.argsort(np.array(layer_importances)).tolist()
     print(f"All layers removal order: {','.join(map(str, all_layers_removal_order))}")
 
-    remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=False)
+    remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=True)
 
     print(f"remove layers: {layers_to_remove}")
-    print(model)
+    # print(model)
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

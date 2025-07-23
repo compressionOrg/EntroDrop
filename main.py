@@ -2,7 +2,6 @@ from utils.parser import get_args
 from utils.utils import fix_seed, get_loaders
 from transformers import AutoTokenizer
 from LlamaEntroDrop import LlamaForCausalLMDrop
-from LlamaResDrop import LlamaForCausalLMResDrop
 from MistralEntroDrop import MistralForCausalLMDrop
 from transformers import LlamaForCausalLM
 import torch

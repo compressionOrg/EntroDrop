@@ -9,26 +9,32 @@ from evaluate_grasp import evaluate_model
 from typing import Optional, List, Literal
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import torch.nn.functional as F
 
 
 def block_influence(
     input_hidden_state: torch.Tensor,
     output_hidden_state: torch.Tensor,
-    angular=False,
+    angular: bool = False,
+    metric: str = "mse",
 ):
     """
     input_hidden_state: B, S, D
     output_hidden_state: B, S, D
     """
     _, _, d = input_hidden_state.shape
-    input_hidden_state = input_hidden_state.reshape(-1, d)
-    output_hidden_state = output_hidden_state.reshape(-1, d)
+    input_hidden_state_flat = input_hidden_state.reshape(-1, d)
+    output_hidden_state_flat = output_hidden_state.reshape(-1, d)
 
-    norm_input = input_hidden_state.norm(dim=-1, keepdim=True)
-    norm_output = output_hidden_state.norm(dim=-1, keepdim=True)
+    if metric == "mse":
+        # MSE part
+        mse = torch.mean((input_hidden_state_flat - output_hidden_state_flat) ** 2, dim=-1)
+        return mse
 
-    sim = (input_hidden_state @ output_hidden_state.T) / (norm_input * norm_output)
-    sim = sim.diagonal().nan_to_num(nan=0.5)
+    # Fallback or other metrics can be placed here if needed
+    # For now, we assume only 'mse' is used as per the request.
+    # Original logic for cosine and angular, refactored for efficiency
+    sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
 
     if angular:
         return (torch.arccos(sim) / torch.pi)
@@ -42,6 +48,7 @@ def compute_bi(
         calibration_dataloader: Optional[DataLoader] = None,
         hiddens: Optional[List[torch.Tensor]] = None,
         angular: bool = False,
+        metric: str = "mse",
         device: Literal["cpu", "cuda"] = "cuda",
         *args, **kwargs
     ):
@@ -65,7 +72,8 @@ def compute_bi(
             layer_importances[i] += block_influence(
                 in_hidden,
                 out_hidden,
-                angular=angular
+                angular=angular,
+                metric=metric
             ).mean().cpu().item()
 
     print(f"\n=======>Compute Block Influence")
@@ -125,7 +133,7 @@ if __name__ == "__main__":
     model.to(device=device)
     model.eval()
 
-    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, calibration_dataloader=calibration_dataloader, device=device)
+    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, metric="mse", calibration_dataloader=calibration_dataloader, device=device)
 
     all_layers_removal_order = np.argsort(np.array(layer_importances)).tolist()
     print(f"All layers removal order: {','.join(map(str, all_layers_removal_order))}")

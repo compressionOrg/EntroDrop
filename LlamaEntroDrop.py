@@ -108,14 +108,15 @@ class LlamaAttentionDrop(LlamaAttention):
 
 
 class LlamaDecoderLayerDrop(LlamaDecoderLayer):
-    def __init__(self, config: LlamaConfig, layer_idx: int):
+    def __init__(self, config: LlamaConfig, layer_idx: int, metric: str = "mse_normalized_combo"):
         super().__init__(config, layer_idx)
         self.hidden_size = config.hidden_size
         self.self_attn = LlamaAttentionDrop(config=config, layer_idx=layer_idx)
         self.layer_idx = layer_idx
+        self.metric = metric  # "l1", "l2", "kl_divergence", "mse", "taylor", or "cosine_similarity"
 
     def compute_rrc(self, h_prev: torch.Tensor, h_curr: torch.Tensor) -> float:
-        """Computes the Relative Residual Contribution (RRC).
+        """Computes the Relative Residual Contribution (RRC) using different metrics.
 
         Args:
             h_prev: The hidden state before the block.
@@ -128,14 +129,137 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
         h_prev = h_prev.detach().to(torch.float32)
         h_curr = h_curr.detach().to(torch.float32)
 
-        # RRC = ||h_{l+1} - h_l||₂ / ||h_l||₂
-        update_norm = torch.linalg.norm(h_curr - h_prev)
-        input_norm = torch.linalg.norm(h_prev)
+        if self.metric == "l2":
+            # Original L2 norm method: RRC = ||h_{l+1} - h_l||₂ / ||h_l||₂
+            # Flatten tensors to handle multi-dimensional inputs
+            h_prev_flat = h_prev.view(-1)
+            h_curr_flat = h_curr.view(-1)
+            update_norm = torch.linalg.norm(h_curr_flat - h_prev_flat, ord=2)
+            input_norm = torch.linalg.norm(h_prev_flat, ord=2)
+            rrc_score = update_norm / (input_norm + 1e-10)
+        elif self.metric == "l1":
+            # L1 norm method: RRC = ||h_{l+1} - h_l||₁ / ||h_l||₁
+            # Flatten tensors to handle multi-dimensional inputs
+            h_prev_flat = h_prev.view(-1)
+            h_curr_flat = h_curr.view(-1)
+            update_norm = torch.linalg.norm(h_curr_flat - h_prev_flat, ord=1)
+            input_norm = torch.linalg.norm(h_prev_flat, ord=1)
+            rrc_score = update_norm / (input_norm + 1e-10)
+        elif self.metric == "kl_divergence":
+            # KL divergence method
+            rrc_score = self._compute_kl_divergence(h_prev, h_curr)
+        # elif self.metric == "mse1":
+            # Mean Squared Error method: MSE = mean((h_curr - h_prev)²) / mean(h_prev²)
+            # Flatten tensors to handle multi-dimensional inputs
+            # h_prev_flat = h_prev.view(-1)
+            # h_curr_flat = h_curr.view(-1)
+            # mse_diff = torch.mean((h_curr_flat - h_prev_flat) ** 2)
+            # mse_input = torch.mean(h_prev_flat ** 2)
+            # rrc_score = mse_diff / (mse_input + 1e-10)
+        elif self.metric == "mse":
+            h_prev_flat = h_prev.view(-1)
+            h_curr_flat = h_curr.view(-1)
+            mse = torch.mean((h_curr_flat - h_prev_flat) ** 2)
+            cos_sim = F.cosine_similarity(h_prev_flat.unsqueeze(0), h_curr_flat.unsqueeze(0), dim=1)[0]
+            rrc_score = mse + (1 - cos_sim)
+        elif self.metric == "cos":
+            h_prev_flat = h_prev.view(-1)
+            h_curr_flat = h_curr.view(-1)
+            cos_sim = F.cosine_similarity(h_prev_flat.unsqueeze(0), h_curr_flat.unsqueeze(0), dim=1)[0]
+            rrc_score = 1 - cos_sim
+        elif self.metric == "mse_normalized_combo":
+            # Combination after Normalization: Normalize MSE and (1 - cos_sim) before combining
+            h_prev_flat = h_prev.view(-1)
+            h_curr_flat = h_curr.view(-1)
+            
+            # Calculate MSE and (1 - Cosine Similarity)
+            mse = torch.mean((h_curr_flat - h_prev_flat) ** 2)
+            cos_sim_term = 1 - F.cosine_similarity(h_prev_flat.unsqueeze(0), h_curr_flat.unsqueeze(0), dim=1)[0]
+            
+            # Normalize both terms
+            # Sigmoid for MSE to scale it to (0, 1)
+            mse_norm = torch.sigmoid(mse)
+            # The cosine similarity term is already in [0, 2], scale it to [0, 1]
+            cos_sim_term_norm = cos_sim_term / 2.0
+            
+            # Combine the normalized scores
+            rrc_score = mse_norm + cos_sim_term_norm
+        elif self.metric == "taylor":
+            # Taylor expansion method: approximates the function change using first and second order terms
+            # RRC = (||Δh||₂ + 0.5 * ||Δh||₂²/||h_prev||₂) / ||h_prev||₂
+            # Flatten tensors to handle multi-dimensional inputs
+            h_prev_flat = h_prev.view(-1)
+            h_curr_flat = h_curr.view(-1)
+            delta_h = h_curr_flat - h_prev_flat
+            
+            # First order term: ||Δh||₂
+            first_order = torch.linalg.norm(delta_h, ord=2)
+            
+            # Second order term: 0.5 * ||Δh||₂²/||h_prev||₂
+            h_prev_norm = torch.linalg.norm(h_prev_flat, ord=2)
+            second_order = 0.5 * (first_order ** 2) / (h_prev_norm + 1e-10)
+            
+            # Combined Taylor approximation
+            taylor_approx = first_order + second_order
+            rrc_score = taylor_approx / (h_prev_norm + 1e-10)
+        elif self.metric == "spectral_norm":
+            # Spectral Norm method: RRC = spectral_norm(h_curr - h_prev) / spectral_norm(h_prev)
+            delta_h = h_curr - h_prev
+            delta_flat = delta_h.view(delta_h.shape[0] * delta_h.shape[1], -1)
+            h_prev_flat = h_prev.view(h_prev.shape[0] * h_prev.shape[1], -1)
+            spectral_norm_delta = torch.linalg.svdvals(delta_flat).max()
+            spectral_norm_prev = torch.linalg.svdvals(h_prev_flat).max()
+            rrc_score = spectral_norm_delta / (spectral_norm_prev + 1e-10)
+        elif self.metric == "mutual_information":
+            # Mutual Information based: Use conditional entropy H(curr | prev) as unique contribution
+            h_prev_flat = h_prev.view(-1).cpu().numpy()
+            h_curr_flat = h_curr.view(-1).cpu().numpy()
+            if len(h_prev_flat) < 2 or len(h_curr_flat) < 2:
+                return 0.0  # Not enough samples
+            # Entropy of prev
+            kde_prev = gaussian_kde(h_prev_flat)
+            h_prev_ent = -np.mean(kde_prev.logpdf(h_prev_flat))
+            # Joint entropy
+            joint_data = np.vstack([h_prev_flat, h_curr_flat])
+            kde_joint = gaussian_kde(joint_data)
+            h_joint = -np.mean(kde_joint.logpdf(joint_data))
+            # Conditional entropy H(curr|prev) = H(joint) - H(prev)
+            rrc_score = h_joint - h_prev_ent
+        elif self.metric == "wasserstein":
+            # Wasserstein Distance based: Quantify the "work" to move from prev to curr distribution
+            from scipy.stats import wasserstein_distance
+            h_prev_flat = h_prev.view(-1).cpu().numpy()
+            h_curr_flat = h_curr.view(-1).cpu().numpy()
+            rrc_score = wasserstein_distance(h_prev_flat, h_curr_flat)
+        else:
+            raise ValueError(f"Unknown metric: {self.metric}. Supported metrics: 'l1', 'l2', 'kl_divergence', 'mse', 'mse_normalized_combo', 'taylor', 'cos', 'spectral_norm', 'mutual_information', 'wasserstein'")
 
-        # Add a small epsilon to avoid division by zero
-        rrc_score = update_norm / (input_norm + 1e-10)
+        return rrc_score.item() if isinstance(rrc_score, torch.Tensor) else rrc_score
 
-        return rrc_score.item()
+    def _compute_kl_divergence(self, h_prev: torch.Tensor, h_curr: torch.Tensor) -> float:
+        """Computes KL divergence between distributions of h_prev and h_curr.
+        
+        Args:
+            h_prev: The hidden state before the block.
+            h_curr: The hidden state after the block.
+            
+        Returns:
+            KL divergence score as a float.
+        """
+        # Flatten tensors to compute distributions
+        h_prev_flat = h_prev.view(-1)
+        h_curr_flat = h_curr.view(-1)
+        
+        # Convert to probability distributions using softmax
+        # Add small epsilon to avoid log(0)
+        eps = 1e-10
+        p_prev = F.softmax(h_prev_flat, dim=0) + eps
+        p_curr = F.softmax(h_curr_flat, dim=0) + eps
+        
+        # Compute KL divergence: KL(P||Q) = sum(P * log(P/Q))
+        kl_div = torch.sum(p_prev * torch.log(p_prev / p_curr))
+        
+        return kl_div.item()
 
     def forward(
         self,
@@ -201,8 +325,9 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
 
             hidden_states = residual + hidden_states
 
-        # Calculate RRC for the Attention block
-        rrc_attn = self.compute_rrc(residual, hidden_states)
+        # Calculate RRC for the Attention block (default: skip calculation)
+        # rrc_attn = self.compute_rrc(residual, hidden_states)
+        rrc_attn = 0  # Default to 0, not calculating attention RRC
 
         # Fully Connected
         residual = hidden_states
@@ -210,8 +335,9 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
         hidden_states = self.mlp(hidden_states)
         hidden_states = residual + hidden_states
 
-        # Calculate RRC for the entire Layer
+        # Calculate RRC for the entire Layer (default: skip calculation)
         rrc_layer = self.compute_rrc(orig_input, hidden_states)
+        # rrc_layer = 0  # Default to 0, not calculating layer RRC
 
         outputs = (hidden_states,)
 
@@ -223,11 +349,12 @@ class LlamaDecoderLayerDrop(LlamaDecoderLayer):
 
 class LlamaModelDrop(LlamaModel):
     # init the model 
-    def __init__(self, config):
+    def __init__(self, config, metric: str = "mse_normalized_combo"):
         super().__init__(config)
         self.config = config
         self.drop_attentions = None
-        self.layers = nn.ModuleList([LlamaDecoderLayerDrop(config, i) for i in range(config.num_hidden_layers)])
+        self.metric = metric
+        self.layers = nn.ModuleList([LlamaDecoderLayerDrop(config, i, metric) for i in range(config.num_hidden_layers)])
         self.layer_num = len(self.layers)
 
         self.norms = [0 for _ in range(self.config.num_hidden_layers - 1)]
@@ -341,13 +468,14 @@ class LlamaModelDrop(LlamaModel):
 
 class LlamaForCausalLMDrop(LlamaForCausalLM):
     # init the model 
-    def __init__(self, config):
+    def __init__(self, config, metric: str = "mse_normalized_combo"):
         super().__init__(config)
         self.config = config
-        self.model = LlamaModelDrop(config)
+        self.metric = metric
+        self.model = LlamaModelDrop(config, metric)
 
         self.current_drop_order = 0
-        print(self.model.dtype)
+        print(f"Model dtype: {self.model.dtype}, Using metric: {self.metric}")
 
     def is_prefilling_stage(self, input_ids):
         seq_len = input_ids.size(1)
@@ -473,7 +601,7 @@ class LlamaForCausalLMDrop(LlamaForCausalLM):
 
         self.config.drop_layers_order = self.model.drop_layers_order
 
-        drop_layers_order_str = "_".join([str(i) for i in drop_layers_order])
+        drop_layers_order_str = ",".join([str(i) for i in drop_layers_order])
         print(drop_layers_order_str)
         return drop_layers_order_str
 

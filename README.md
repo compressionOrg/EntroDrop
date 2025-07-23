@@ -14,6 +14,12 @@ python main.py
 bash run_rm_layers_resnet.sh
 ```
 
+## LoRA微调
+
+```
+python run_lora.py
+```
+
 评估结果：
 
 [text](llama3.1_8b_resnet.log)

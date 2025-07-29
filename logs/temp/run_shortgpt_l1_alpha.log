@@ -1,0 +1,315 @@
+Running with alpha=0.1
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 25,24,26,27,23,28,22,20,21,29,19,18,17,30,16,11,10,13,15,14,9,12,8,7,3,6,4,2,5,1,0,31
+remove layers: [25, 24, 26, 27, 23, 28, 22, 20, 21, 29, 19, 18]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.1
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.2
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 25,24,26,23,27,22,28,20,21,19,29,18,17,30,16,10,11,13,15,14,9,12,8,7,3,6,2,4,5,1,0,31
+remove layers: [25, 24, 26, 23, 27, 22, 28, 20, 21, 19, 29, 18]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.2
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.3
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 25,24,26,23,27,22,28,20,21,19,29,18,17,16,10,11,13,15,14,30,9,12,8,7,3,6,2,4,5,1,0,31
+remove layers: [25, 24, 26, 23, 27, 22, 28, 20, 21, 19, 29, 18]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.3
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.4
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 24,25,23,26,22,27,20,21,28,19,18,29,17,10,16,11,13,14,15,9,12,8,30,3,7,6,2,4,5,1,0,31
+remove layers: [24, 25, 23, 26, 22, 27, 20, 21, 28, 19, 18, 29]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.4
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.5
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 24,25,23,26,22,20,27,19,21,28,18,29,17,10,11,16,13,9,14,15,12,8,3,7,6,2,4,5,30,1,0,31
+remove layers: [24, 25, 23, 26, 22, 20, 27, 19, 21, 28, 18, 29]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.5
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.6
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 24,23,25,22,20,26,19,21,27,18,28,17,10,11,13,16,9,14,29,8,12,15,3,7,2,6,4,5,1,30,0,31
+remove layers: [24, 23, 25, 22, 20, 26, 19, 21, 27, 18, 28, 17]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.6
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.7
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 24,23,20,25,22,19,21,26,18,27,10,11,17,13,9,8,16,28,12,3,14,15,2,7,6,4,5,1,29,30,0,31
+remove layers: [24, 23, 20, 25, 22, 19, 21, 26, 18, 27, 10, 11]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.7
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.8
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 20,19,23,10,22,24,11,3,18,25,21,9,2,8,13,26,12,17,14,4,7,16,6,1,15,5,27,28,29,0,30,31
+remove layers: [20, 19, 23, 10, 22, 24, 11, 3, 18, 25, 21, 9]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.8
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50
+Running with alpha=0.9
+=======> Done Loading Data!
+
+=======>Compute Block Influence
+All layers removal order: 2,3,1,4,10,11,8,9,5,6,7,13,12,19,20,14,18,15,16,17,22,23,21,24,0,25,26,27,28,29,30,31
+remove layers: [2, 3, 1, 4, 10, 11, 8, 9, 5, 6, 7, 13]
+LlamaForCausalLM(
+  (model): LlamaModel(
+    (embed_tokens): Embedding(128256, 4096)
+    (layers): ModuleList(
+      (0-19): 20 x LlamaDecoderLayer(
+        (self_attn): LlamaSdpaAttention(
+          (q_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (k_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (v_proj): Linear(in_features=4096, out_features=1024, bias=False)
+          (o_proj): Linear(in_features=4096, out_features=4096, bias=False)
+          (rotary_emb): LlamaRotaryEmbedding()
+        )
+        (mlp): LlamaMLP(
+          (gate_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (up_proj): Linear(in_features=4096, out_features=14336, bias=False)
+          (down_proj): Linear(in_features=14336, out_features=4096, bias=False)
+          (act_fn): SiLU()
+        )
+        (input_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+        (post_attention_layernorm): LlamaRMSNorm((4096,), eps=1e-05)
+      )
+    )
+    (norm): LlamaRMSNorm((4096,), eps=1e-05)
+    (rotary_emb): LlamaRotaryEmbedding()
+  )
+  (lm_head): Linear(in_features=4096, out_features=128256, bias=False)
+)
+Completed alpha=0.9
+= AI_ETHICS.md CODE_OF_CONDUCT.md CODEOWNERS CONTRIBUTING.md dataset datasets eval_full.sh evaluate_grasp.py evaluate.py evaluate.sh layer_seq.txt LICENSE.txt llama3.1_8b_cosine.log llama3.1_8b_entrodrop.log llama3.1_8b_laco.log llama3.1_8b_resnet_l1.log llama3.1_8b_resnet.log llama3.1_8b_resnet_mse2.log llama3.1_8b_resnet_mse.log llama3.1_8b_shortgpt_l1.log llama3.1_8b_shortgpt.log llama3.1_8b_shortgpt_mse_alpha_0.1.log llama3.1_8b_shortgpt_mse_alpha_0.2.log llama3.1_8b_shortgpt_mse_alpha_0.3.log llama3.1_8b_shortgpt_mse_alpha_0.4.log llama3.1_8b_shortgpt_mse_alpha_0.6.log llama3.1_8b_shortgpt_mse_alpha_0.7.log llama3.1_8b_shortgpt_mse_alpha_0.8.log llama3.1_8b_shortgpt_mse_alpha_0.9.log llama3.1_8b_shortgpt_mse.log llama3.1_8b_uidl.log llama3.1_8b_uidl_mse.log LlamaEntroDrop-copy.py LlamaEntroDropImproved.py LlamaEntroDrop.py main_Mistral.py main.py meta-llama-Llama-2-7b-hf_layer_importances.png meta-llama-Llama-2-7b-hf_shortgpt_layers9 meta-llama-Llama-2-7b-hf_shortgpt_mse_layers9 meta-llama-Llama-2-7b-hf_uidl_layers9 meta-llama-Llama-2-7b-hf_uidl_mse_layers9 mistral_7b_shortgpt_mse.log mistral_7b_uidl_mse.log MistralEntroDrop.py prompter.py __pycache__ README.md requirements.txt run_laco.py run_llama3_laco.sh run_LLMStreamline.py run_lora.py run_mistral_shortgpt_mse.sh run_mistral_uidl_mse.sh run_mse.py run_rm_layers_entrodrop.sh run_rm_layers_mistral.py run_rm_layers.py run_rm_layers_resnet_cos.sh run_rm_layers_resnet_l1.sh run_rm_layers_resnet_mse2.sh run_rm_layers_resnet_mse.sh run_rm_layers_resnet.sh run_rm_layers_resnet_wasserstein.sh run_rm_layers_shortgpt copy.sh run_rm_layers_shortgpt_euclidean.sh run_rm_layers_shortgpt_l1.sh run_rm_layers_shortgpt_mse_alpha.sh run_rm_layers_shortgpt_mse.sh run_rm_layers_shortgpt.sh run_rm_layers_uidl_mse.sh run_rm_layers_uidl.sh run_shortgpt_euclidean.py run_shortgpt_l1_alpha.log run_shortgpt_l1_alpha.py run_shortgpt_l1_alpha.sh run_shortgpt_l1.py run_shortgpt_l2.py run_shortgpt_lora.py run_shortgpt_mse_alpha.log run_shortgpt_mse_alpha.py run_shortgpt_mse_alpha.sh run_shortgpt_mse_plot.py run_shortgpt_mse.py run_shortgpt.py run_uidl_mse.py run_uidl.py SECURITY.md utils 50

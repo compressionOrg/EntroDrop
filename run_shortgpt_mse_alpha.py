@@ -10,6 +10,7 @@ from typing import Optional, List, Literal
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import torch.nn.functional as F
+import argparse
 
 
 def block_influence(
@@ -17,6 +18,7 @@ def block_influence(
     output_hidden_state: torch.Tensor,
     angular: bool = False,
     metric: str = "normalized_combo",
+    alpha: float = 0.5,
 ):
     """
     input_hidden_state: B, S, D
@@ -36,7 +38,7 @@ def block_influence(
         cos_sim_term = 1 - sim
         cos_sim_term_norm = cos_sim_term / 2.0  # Scale from [0, 2] to [0, 1]
 
-        return mse_norm + cos_sim_term_norm
+        return alpha * mse_norm + (1 - alpha) * cos_sim_term_norm
 
     # Original logic for cosine and angular, refactored for efficiency
     sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
@@ -55,6 +57,7 @@ def compute_bi(
         angular: bool = False,
         metric: str = "cosine",
         device: Literal["cpu", "cuda"] = "cuda",
+        alpha: float = 0.5,
         *args, **kwargs
     ):
     layer_importances = [0 for _ in model.model.layers]
@@ -78,7 +81,8 @@ def compute_bi(
                 in_hidden,
                 out_hidden,
                 angular=angular,
-                metric=metric
+                metric=metric,
+                alpha=alpha
             ).mean().cpu().item()
 
     print(f"\n=======>Compute Block Influence")
@@ -129,18 +133,26 @@ def remove_layers(model, layers_to_remove: Optional[List[int]] = [], layer_impor
         raise NotImplementedError("lack layers_to_remove")
 
 if __name__ == "__main__":
-    model_name = 'meta-llama/Llama-2-7b-hf' #  meta-llama/Llama-3.1-8B mistralai/Mistral-7B-v0.3 meta-llama/Llama-2-7b-hf
+    parser = argparse.ArgumentParser(description='Run ShortGPT with MSE and alpha parameter')
+    parser.add_argument('--alpha', type=float, default=0.6, help='Weight factor for MSE term (default: 0.5)')
+    parser.add_argument('--model_name', type=str, default='baichuan-inc/Baichuan2-7B-Base', 
+                        choices=['meta-llama/Llama-3.1-8B', 'mistralai/Mistral-7B-v0.3', 
+                                'meta-llama/Llama-2-7b-hf', 'baichuan-inc/Baichuan2-7B-Base'],
+                        help='Model name to use for pruning (default: baichuan-inc/Baichuan2-7B-Base)')
+    args = parser.parse_args()
+
+    model_name = args.model_name
+    model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     
-    model = AutoModelForCausalLM.from_pretrained(model_name)
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
     device = "cuda:0"
-    num_prune_layers = 9
+    num_prune_layers = 7
     calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=512, batch_size=1, seq_len=2048, padding="max_length")
     model.to(device=device)
     model.eval()
 
-    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, metric="normalized_combo", calibration_dataloader=calibration_dataloader, device=device)
+    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, metric="normalized_combo", calibration_dataloader=calibration_dataloader, device=device, alpha=args.alpha)
 
     all_layers_removal_order = np.argsort(np.array(layer_importances)).tolist()
     print(f"All layers removal order: {','.join(map(str, all_layers_removal_order))}")
@@ -148,16 +160,16 @@ if __name__ == "__main__":
     remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=False)
 
     print(f"remove layers: {layers_to_remove}")
-    print(model)
+    # print(model)
     
     # Update model config to reflect the actual number of layers after pruning
-    original_num_layers = model.config.num_hidden_layers
-    new_num_layers = original_num_layers - num_prune_layers
-    model.config.num_hidden_layers = new_num_layers
-    print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")
+    # original_num_layers = model.config.num_hidden_layers
+    # new_num_layers = original_num_layers - num_prune_layers
+    # model.config.num_hidden_layers = new_num_layers
+    # print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")    
     
-    model_name = model_name.replace('/', '-')
-    model.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
-    tokenizer.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
+    # model_name = model_name.replace('/', '-')
+    # model.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}_alpha{args.alpha}')
+    # tokenizer.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}_alpha{args.alpha}')
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

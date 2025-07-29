@@ -10,6 +10,7 @@ from typing import Optional, List, Literal
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 
 
 def block_influence(
@@ -136,7 +137,7 @@ if __name__ == "__main__":
     tokenizer.pad_token = tokenizer.eos_token
     device = "cuda:0"
     num_prune_layers = 9
-    calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=512, batch_size=1, seq_len=2048, padding="max_length")
+    calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=50, batch_size=1, seq_len=128, padding="max_length")
     model.to(device=device)
     model.eval()
 
@@ -144,6 +145,29 @@ if __name__ == "__main__":
 
     all_layers_removal_order = np.argsort(np.array(layer_importances)).tolist()
     print(f"All layers removal order: {','.join(map(str, all_layers_removal_order))}")
+    
+    # Print layer importances values
+    print("Layer importances values:")
+    print([f"{val:.2f}" for val in layer_importances])
+    
+    # 绘制layer_importances纵向柱状图
+    plt.figure(figsize=(8, 10))
+    layer_indices = list(range(len(layer_importances)))
+    plt.barh(layer_indices, layer_importances, alpha=0.7, color='skyblue', edgecolor='navy')
+    plt.ylabel('Layer Index')
+    plt.xlabel('Layer Importance')
+    plt.title('Layer Importance Distribution')
+    plt.grid(True, alpha=0.3)
+    
+    # 标记要移除的层
+    for layer_idx in layers_to_remove:
+        plt.barh(layer_idx, layer_importances[layer_idx], color='red', alpha=0.8, label='Layers to Remove' if layer_idx == layers_to_remove[0] else "")
+    
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(f'{model_name.replace("/", "-")}_layer_importances.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    print(f"Layer importance plot saved as {model_name.replace('/', '-')}_layer_importances.png")
 
     remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=False)
 
@@ -151,13 +175,13 @@ if __name__ == "__main__":
     print(model)
     
     # Update model config to reflect the actual number of layers after pruning
-    original_num_layers = model.config.num_hidden_layers
-    new_num_layers = original_num_layers - num_prune_layers
-    model.config.num_hidden_layers = new_num_layers
-    print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")
+    # original_num_layers = model.config.num_hidden_layers
+    # new_num_layers = original_num_layers - num_prune_layers
+    # model.config.num_hidden_layers = new_num_layers
+    # print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")
     
-    model_name = model_name.replace('/', '-')
-    model.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
-    tokenizer.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
+    # model_name = model_name.replace('/', '-')
+    # model.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
+    # tokenizer.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

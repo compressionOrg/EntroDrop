@@ -1,0 +1,14 @@
+2025-07-28 23:36:35,698 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-28 23:37:29,974 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-28 23:43:05,657 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-28 23:47:22,916 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-28 23:51:57,519 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-28 23:52:06,713 - evaluate_grasp - INFO - wikitext2 10.154561042785645
+2025-07-28 23:52:06,713 - evaluate_grasp - INFO - load dataset ptb
+2025-07-28 23:54:21,789 - evaluate_grasp - INFO - ptb 15.42492389678955
+2025-07-29 04:29:13,380 - evaluate_grasp - INFO - {'wikitext2': 10.154561042785645, 'ptb': 15.42492389678955, 'boolq': {'acc': 0.7828746177370031, 'acc_stderr': 0.007210974239098797}, 'piqa': {'acc': 0.7459194776931447, 'acc_stderr': 0.010157271999135044, 'acc_norm': 0.7568008705114254, 'acc_norm_stderr': 0.010009611953858922}, 'hellaswag': {'acc': 0.512248556064529, 'acc_stderr': 0.004988283981631049, 'acc_norm': 0.689205337582155, 'acc_norm_stderr': 0.004618730353217063}, 'winogrande': {'acc': np.float64(0.7087608524072613), 'acc_stderr': 0.012769029305370699}, 'arc_easy': {'acc': 0.7226430976430976, 'acc_stderr': 0.009186490105111906, 'acc_norm': 0.7129629629629629, 'acc_norm_stderr': 0.009282621598983076}, 'arc_challenge': {'acc': 0.3890784982935154, 'acc_stderr': 0.014247309976045607, 'acc_norm': 0.4274744027303754, 'acc_norm_stderr': 0.01445686294465065}, 'openbookqa': {'acc': 0.272, 'acc_stderr': 0.019920483209566076, 'acc_norm': 0.388, 'acc_norm_stderr': 0.02181430098478763}, 'mathqa': {'acc': 0.31758793969849247, 'acc_stderr': 0.008522282736159376, 'acc_norm': 0.3055276381909548, 'acc_norm_stderr': 0.008432441274545606}, 'mean': np.float64(0.5563891299421305)}
+2025-07-29 04:29:13,382 - evaluate_grasp - INFO - 
+
+===== mean acc: 0.5563891299421305 =====
+
+

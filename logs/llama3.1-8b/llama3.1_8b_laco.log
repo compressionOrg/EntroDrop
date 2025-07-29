@@ -1,0 +1,120 @@
+2025-07-24 13:53:08,301 - evaluate_grasp - INFO - {'wikitext2': 416.4730529785156, 'mathqa': {'acc': 0.21976549413735344, 'acc_stderr': 0.0075804138963817954, 'acc_norm': 0.22445561139028475, 'acc_norm_stderr': 0.007637815339398034}, 'piqa': {'acc': 0.6577801958650707, 'acc_stderr': 0.011069764658685447, 'acc_norm': 0.6621327529923831, 'acc_norm_stderr': 0.011035474307853843}, 'hellaswag': {'acc': 0.35391356303525195, 'acc_stderr': 0.0047720549044044215, 'acc_norm': 0.4482174865564629, 'acc_norm_stderr': 0.0049629497842360445}, 'winogrande': {'acc': np.float64(0.5351223362273086), 'acc_stderr': 0.014017773120881583}, 'arc_easy': {'acc': 0.4642255892255892, 'acc_stderr': 0.010233488709726547, 'acc_norm': 0.44023569023569026, 'acc_norm_stderr': 0.010186228624515655}, 'arc_challenge': {'acc': 0.25597269624573377, 'acc_stderr': 0.012753013241244521, 'acc_norm': 0.3046075085324232, 'acc_norm_stderr': 0.013449522109932494}, 'openbookqa': {'acc': 0.19, 'acc_stderr': 0.017561800410758978, 'acc_norm': 0.326, 'acc_norm_stderr': 0.02098400956239357}, 'boolq': {'acc': 0.4253822629969419, 'acc_stderr': 0.008647125100676084}, 'mean': np.float64(0.3877702672166562)}
+2025-07-24 13:53:08,303 - evaluate_grasp - INFO -
+
+===== mean acc: 0.3877702672166562 =====2025-07-27 08:47:36,211 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-27 08:47:47,511 - __main__ - INFO - Merge layers: 4
+2025-07-27 08:47:47,511 - __main__ - INFO - Using devices: cuda:0, cuda:2
+2025-07-27 08:47:47,512 - __main__ - INFO - Processing layer: 26
+2025-07-27 08:47:47,512 - __main__ - INFO - Current model layers: 32
+2025-07-27 08:48:14,280 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-27 08:48:24,187 - __main__ - INFO - Merge layers: 6
+2025-07-27 08:48:24,187 - __main__ - INFO - Using devices: cuda:0, cuda:2
+2025-07-27 08:48:24,187 - __main__ - INFO - Processing layer: 24
+2025-07-27 08:48:24,187 - __main__ - INFO - Current model layers: 32
+2025-07-27 08:48:59,853 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-27 08:49:07,531 - __main__ - INFO - Merge layers: 4
+2025-07-27 08:49:07,531 - __main__ - INFO - Using devices: cuda:0, cuda:2
+2025-07-27 08:49:07,531 - __main__ - INFO - Processing layer: 26
+2025-07-27 08:49:07,531 - __main__ - INFO - Current model layers: 32
+2025-07-27 08:49:40,340 - __main__ - INFO - Similarity value: 0.7518
+2025-07-27 08:49:40,341 - __main__ - INFO - Similarity 0.7518 > threshold 0.45, merging layers
+2025-07-27 08:49:42,071 - __main__ - INFO - Processing layer: 25
+2025-07-27 08:49:42,071 - __main__ - INFO - Current model layers: 29
+2025-07-27 08:50:11,792 - __main__ - INFO - Similarity value: 0.4381
+2025-07-27 08:50:11,793 - __main__ - INFO - Similarity 0.4381 <= threshold 0.45, moving to next layer
+2025-07-27 08:50:11,793 - __main__ - INFO - Processing layer: 24
+2025-07-27 08:50:11,793 - __main__ - INFO - Current model layers: 29
+2025-07-27 08:50:23,178 - __main__ - INFO - Similarity value: 0.5298
+2025-07-27 08:50:23,179 - __main__ - INFO - Similarity 0.5298 > threshold 0.45, merging layers
+2025-07-27 08:50:24,732 - __main__ - INFO - Processing layer: 23
+2025-07-27 08:50:24,732 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:50:52,521 - __main__ - INFO - Similarity value: 0.3804
+2025-07-27 08:50:52,522 - __main__ - INFO - Similarity 0.3804 <= threshold 0.45, moving to next layer
+2025-07-27 08:50:52,522 - __main__ - INFO - Processing layer: 22
+2025-07-27 08:50:52,522 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:51:03,128 - __main__ - INFO - Similarity value: 0.3308
+2025-07-27 08:51:03,129 - __main__ - INFO - Similarity 0.3308 <= threshold 0.45, moving to next layer
+2025-07-27 08:51:03,129 - __main__ - INFO - Processing layer: 21
+2025-07-27 08:51:03,129 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:51:13,220 - __main__ - INFO - Similarity value: 0.4125
+2025-07-27 08:51:13,221 - __main__ - INFO - Similarity 0.4125 <= threshold 0.45, moving to next layer
+2025-07-27 08:51:13,221 - __main__ - INFO - Processing layer: 20
+2025-07-27 08:51:13,221 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:51:22,933 - __main__ - INFO - Similarity value: 0.4097
+2025-07-27 08:51:22,933 - __main__ - INFO - Similarity 0.4097 <= threshold 0.45, moving to next layer
+2025-07-27 08:51:22,933 - __main__ - INFO - Processing layer: 19
+2025-07-27 08:51:22,933 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:51:35,372 - __main__ - INFO - Similarity value: 0.3981
+2025-07-27 08:51:35,372 - __main__ - INFO - Similarity 0.3981 <= threshold 0.45, moving to next layer
+2025-07-27 08:51:35,372 - __main__ - INFO - Processing layer: 18
+2025-07-27 08:51:35,372 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:51:45,388 - __main__ - INFO - Similarity value: 0.3766
+2025-07-27 08:51:45,388 - __main__ - INFO - Similarity 0.3766 <= threshold 0.45, moving to next layer
+2025-07-27 08:51:45,388 - __main__ - INFO - Processing layer: 17
+2025-07-27 08:51:45,388 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:51:57,143 - __main__ - INFO - Similarity value: 0.4115
+2025-07-27 08:51:57,144 - __main__ - INFO - Similarity 0.4115 <= threshold 0.45, moving to next layer
+2025-07-27 08:51:57,144 - __main__ - INFO - Processing layer: 16
+2025-07-27 08:51:57,144 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:52:07,299 - __main__ - INFO - Similarity value: 0.4069
+2025-07-27 08:52:07,299 - __main__ - INFO - Similarity 0.4069 <= threshold 0.45, moving to next layer
+2025-07-27 08:52:07,300 - __main__ - INFO - Processing layer: 15
+2025-07-27 08:52:07,300 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:52:17,068 - __main__ - INFO - Similarity value: 0.4255
+2025-07-27 08:52:17,068 - __main__ - INFO - Similarity 0.4255 <= threshold 0.45, moving to next layer
+2025-07-27 08:52:17,068 - __main__ - INFO - Processing layer: 14
+2025-07-27 08:52:17,068 - __main__ - INFO - Current model layers: 26
+2025-07-27 08:52:29,537 - __main__ - INFO - Similarity value: 0.4685
+2025-07-27 08:52:29,537 - __main__ - INFO - Similarity 0.4685 > threshold 0.45, merging layers
+2025-07-27 08:52:31,048 - __main__ - INFO - Processing layer: 13
+2025-07-27 08:52:31,048 - __main__ - INFO - Current model layers: 23
+2025-07-27 08:52:54,578 - __main__ - INFO - Similarity value: 0.3158
+2025-07-27 08:52:54,579 - __main__ - INFO - Similarity 0.3158 <= threshold 0.45, moving to next layer
+2025-07-27 08:52:54,579 - __main__ - INFO - Processing layer: 12
+2025-07-27 08:52:54,579 - __main__ - INFO - Current model layers: 23
+2025-07-27 08:53:03,901 - __main__ - INFO - Similarity value: 0.3368
+2025-07-27 08:53:03,902 - __main__ - INFO - Similarity 0.3368 <= threshold 0.45, moving to next layer
+2025-07-27 08:53:03,902 - __main__ - INFO - Processing layer: 11
+2025-07-27 08:53:03,902 - __main__ - INFO - Current model layers: 23
+2025-07-27 08:53:12,095 - __main__ - INFO - Similarity value: 0.3560
+2025-07-27 08:53:12,095 - __main__ - INFO - Similarity 0.3560 <= threshold 0.45, moving to next layer
+2025-07-27 08:53:12,096 - __main__ - INFO - Processing layer: 10
+2025-07-27 08:53:12,096 - __main__ - INFO - Current model layers: 23
+2025-07-27 08:53:20,870 - __main__ - INFO - Similarity value: 0.3871
+2025-07-27 08:53:20,870 - __main__ - INFO - Similarity 0.3871 <= threshold 0.45, moving to next layer
+2025-07-27 08:53:20,870 - __main__ - INFO - Processing layer: 9
+2025-07-27 08:53:20,870 - __main__ - INFO - Current model layers: 23
+2025-07-27 08:53:29,118 - __main__ - INFO - Similarity value: 0.4309
+2025-07-27 08:53:29,119 - __main__ - INFO - Similarity 0.4309 <= threshold 0.45, moving to next layer
+2025-07-27 08:53:29,119 - __main__ - INFO - Processing layer: 8
+2025-07-27 08:53:29,119 - __main__ - INFO - Current model layers: 23
+2025-07-27 08:53:37,475 - __main__ - INFO - Similarity value: 0.4550
+2025-07-27 08:53:37,475 - __main__ - INFO - Similarity 0.4550 > threshold 0.45, merging layers
+2025-07-27 08:53:38,680 - __main__ - INFO - Processing layer: 7
+2025-07-27 08:53:38,681 - __main__ - INFO - Current model layers: 20
+2025-07-27 08:53:58,301 - __main__ - INFO - Similarity value: 0.3476
+2025-07-27 08:53:58,301 - __main__ - INFO - Similarity 0.3476 <= threshold 0.45, moving to next layer
+2025-07-27 08:53:58,301 - __main__ - INFO - Processing layer: 6
+2025-07-27 08:53:58,301 - __main__ - INFO - Current model layers: 20
+2025-07-27 08:54:05,549 - __main__ - INFO - Similarity value: 0.3562
+2025-07-27 08:54:05,549 - __main__ - INFO - Similarity 0.3562 <= threshold 0.45, moving to next layer
+2025-07-27 08:54:05,549 - __main__ - INFO - Processing layer: 5
+2025-07-27 08:54:05,549 - __main__ - INFO - Current model layers: 20
+2025-07-27 08:54:13,243 - __main__ - INFO - Similarity value: 0.3198
+2025-07-27 08:54:13,244 - __main__ - INFO - Similarity 0.3198 <= threshold 0.45, moving to next layer
+2025-07-27 08:54:13,244 - __main__ - INFO - Processing layer: 4
+2025-07-27 08:54:13,244 - __main__ - INFO - Current model layers: 20
+2025-07-27 08:54:20,376 - __main__ - INFO - Similarity value: 0.3320
+2025-07-27 08:54:20,377 - __main__ - INFO - Similarity 0.3320 <= threshold 0.45, moving to next layer
+2025-07-27 08:54:20,377 - __main__ - INFO - Processing layer: 3
+2025-07-27 08:54:20,377 - __main__ - INFO - Current model layers: 20
+2025-07-27 08:54:27,310 - __main__ - INFO - Similarity value: 0.3221
+2025-07-27 08:54:27,310 - __main__ - INFO - Similarity 0.3221 <= threshold 0.45, moving to next layer
+2025-07-27 08:54:27,310 - __main__ - INFO - Processing layer: 2
+2025-07-27 08:54:27,310 - __main__ - INFO - Current model layers: 20
+2025-07-27 08:54:34,321 - __main__ - INFO - Similarity value: 0.2807
+2025-07-27 08:54:34,322 - __main__ - INFO - Similarity 0.2807 <= threshold 0.45, moving to next layer
+2025-07-27 08:54:53,669 - __main__ - INFO - Final compressed model: 20 layers
+2025-07-27 08:54:53,670 - __main__ - INFO - ====================================================================================================
+2025-07-27 08:54:53,672 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-27 09:20:39,567 - evaluate_grasp - INFO - wikitext2 517.65625

@@ -1,10 +1,16 @@
 # from https://github.com/yangyifei729/LaCo/blob/main/laco_llama-13b.ipynb
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"  # 禁用 tokenizers 并行处理
+
 import torch
 import torch.nn as nn
 import numpy as np
 from copy import deepcopy
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from evaluate_grasp import evaluate_model
+import argparse
+import logging
+import sys
 
 
 def merge_layers_return_model(model, merge_base_lay, merge_layer_num):
@@ -52,7 +58,7 @@ def merge_layers_return_model(model, merge_base_lay, merge_layer_num):
     return model_copy
 
 
-def cal_last_hidden_sim(model1, model2, tokenizer, sents, device1, device2):
+def cal_last_hidden_sim(model1, model2, tokenizer, sents, device1, device2, logger=None):
     model1.to(device1)
     model2.to(device2)
     sim_ls = []
@@ -68,21 +74,49 @@ def cal_last_hidden_sim(model1, model2, tokenizer, sents, device1, device2):
         hidden_states2: torch.Tensor = outputs2.hidden_states[-1] # (1, seq_len, hidden)
         sim_ls.append(torch.cosine_similarity(hidden_states1.cpu().squeeze(0).flatten().unsqueeze(0), hidden_states2.cpu().squeeze(0).flatten().unsqueeze(0)))
     sim_ls = [i.item() for i in sim_ls]
-    print(sim_ls, np.mean(sim_ls))
+    if logger:
+        logger.debug(f"Similarity scores: {sim_ls}, Mean: {np.mean(sim_ls):.4f}")
     return np.mean(sim_ls)
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--merge_layers', type=int, default=4, help='Number of layers to merge')
+    parser.add_argument('--log_file', type=str, default=None, help='Path to log file for saving program output')
+    args = parser.parse_args()
 
-    model = AutoModelForCausalLM.from_pretrained('meta-llama/Llama-2-7b-hf')
+    # Set up logger
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False  # Prevent log propagation to the root logger
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+    # Log to console
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+
+    # Log to file
+    if args.log_file:
+        file_handler = logging.FileHandler(args.log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    
+    model_name = 'meta-llama/Llama-3.1-8B'
+    logger.info(f"Loading model: {model_name}")
+
+    model = AutoModelForCausalLM.from_pretrained(model_name)
     model_copy_to_compress = deepcopy(model)
-    tokenizer = AutoTokenizer.from_pretrained('meta-llama/Llama-2-7b-hf')
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
-    device1 = "cuda:1"
+    device1 = "cuda:0"
     device2 = "cuda:2"
+    
+    logger.info(f"Merge layers: {args.merge_layers}")
+    logger.info(f"Using devices: {device1}, {device2}")
 
     INTERVAL = 1
-    MERGE_LAYERS = 7
+    MERGE_LAYERS = args.merge_layers
     HIGHEST_LAY = 30
     LOWEST_LAY = 2
     THRESHOLD = 0.45
@@ -99,17 +133,20 @@ if __name__ == "__main__":
     sents.extend(en_wiki_selected)
 
     while lay >= LOWEST_LAY:
-        print(lay)
-        print('current model layer', len(model_copy_to_compress.model.layers))
+        logger.info(f"Processing layer: {lay}")
+        logger.info(f"Current model layers: {len(model_copy_to_compress.model.layers)}")
         model_copy_to_compress.cpu() # move to cpu first
         tmp_merged_model = merge_layers_return_model(model_copy_to_compress, lay, MERGE_LAYERS-1)
-        sim_value = cal_last_hidden_sim(model, tmp_merged_model, tokenizer, sents, device1=device1, device2=device2)
+        sim_value = cal_last_hidden_sim(model, tmp_merged_model, tokenizer, sents, device1=device1, device2=device2, logger=logger)
+        logger.info(f"Similarity value: {sim_value:.4f}")
         if sim_value > THRESHOLD:
+            logger.info(f"Similarity {sim_value:.4f} > threshold {THRESHOLD}, merging layers")
             model_copy_to_compress = tmp_merged_model
             lay -= INTERVAL
             if lay >= len(model_copy_to_compress.model.layers):
                 lay = len(model_copy_to_compress.model.layers) - 1 - MERGE_LAYERS
         else:
+            logger.info(f"Similarity {sim_value:.4f} <= threshold {THRESHOLD}, moving to next layer")
             lay -= 1
     
     # empty cache
@@ -118,5 +155,7 @@ if __name__ == "__main__":
     if "cuda" in device1 or "cuda" in device2:
         torch.cuda.empty_cache()
 
-    print(model_copy_to_compress)
-    result = evaluate_model(model_copy_to_compress, tokenizer, model_name="llama", tasks="piqa", eval_ppl="wikitext2", device=device1) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa
+    logger.info(f"Final compressed model: {len(model_copy_to_compress.model.layers)} layers")
+    logger.info("=" * 100)
+    
+    result = evaluate_model(model_copy_to_compress, tokenizer, model_name="llama", tasks="mathqa,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa,boolq", eval_ppl="wikitext2", device=device1, log_file=args.log_file)

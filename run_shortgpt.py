@@ -116,11 +116,12 @@ def remove_layers(model, layers_to_remove: Optional[List[int]] = [], layer_impor
         raise NotImplementedError("lack layers_to_remove")
 
 if __name__ == "__main__":
-    model = AutoModelForCausalLM.from_pretrained('meta-llama/Llama-3.1-8B')
-    tokenizer = AutoTokenizer.from_pretrained('meta-llama/Llama-3.1-8B')
+    model_name = 'meta-llama/Llama-3.1-8B' #  meta-llama/Llama-3.1-8B mistralai/Mistral-7B-v0.3 meta-llama/Llama-2-7b-hf baichuan-inc/Baichuan2-7B-Base
+    model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     device = "cuda:0"
-    num_prune_layers = 9
+    num_prune_layers = 12
     calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=512, batch_size=1, seq_len=2048, padding="max_length")
     model.to(device=device)
     model.eval()
@@ -134,5 +135,15 @@ if __name__ == "__main__":
 
     print(f"remove layers: {layers_to_remove}")
     print(model)
+    
+    # Update model config to reflect the actual number of layers after pruning
+    original_num_layers = model.config.num_hidden_layers
+    new_num_layers = original_num_layers - num_prune_layers
+    model.config.num_hidden_layers = new_num_layers
+    print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")
+    
+    model_name = model_name.replace('/', '-')
+    model.save_pretrained(f'{model_name}_shortgpt_layers{num_prune_layers}')
+    tokenizer.save_pretrained(f'{model_name}_shortgpt_layers{num_prune_layers}')
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

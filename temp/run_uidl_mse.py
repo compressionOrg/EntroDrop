@@ -16,7 +16,7 @@ def block_influence(
     input_hidden_state: torch.Tensor,
     output_hidden_state: torch.Tensor,
     angular: bool = False,
-    metric: str = "normalized_combo",
+    metric: str = "angular_mse_combo",
 ):
     """
     input_hidden_state: B, S, D
@@ -26,20 +26,17 @@ def block_influence(
     input_hidden_state_flat = input_hidden_state.reshape(-1, d)
     output_hidden_state_flat = output_hidden_state.reshape(-1, d)
 
-    if metric == "normalized_combo":
+    sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
+
+    if metric == "angular_mse_combo" and angular:
         # MSE part
         mse = torch.mean((input_hidden_state_flat - output_hidden_state_flat) ** 2, dim=-1)
         mse_norm = torch.sigmoid(mse)
 
-        # Cosine similarity part
-        sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
-        cos_sim_term = 1 - sim
-        cos_sim_term_norm = cos_sim_term / 2.0  # Scale from [0, 2] to [0, 1]
+        # Angular distance part
+        angular_dist = torch.arccos(sim) / torch.pi  # Already in [0, 1]
 
-        return mse_norm + cos_sim_term_norm
-
-    # Original logic for cosine and angular, refactored for efficiency
-    sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
+        return mse_norm + angular_dist
 
     if angular:
         return (torch.arccos(sim) / torch.pi)
@@ -53,7 +50,7 @@ def compute_bi(
         calibration_dataloader: Optional[DataLoader] = None,
         hiddens: Optional[List[torch.Tensor]] = None,
         angular: bool = False,
-        metric: str = "cosine",
+        metric: str = "angular_mse_combo",
         device: Literal["cpu", "cuda"] = "cuda",
         *args, **kwargs
     ):
@@ -62,12 +59,13 @@ def compute_bi(
     Computes layer-wise importances over input tokens.
     """
     def compute_bi_hiddens(hiddens: Optional[List[torch.Tensor]] = None):
+        local_num_prune_layers = num_prune_layers
         if not angular:
-            num_prune_layers = 1
+            local_num_prune_layers = 1
 
-        for i in range(len(hiddens) - num_prune_layers):
+        for i in range(len(hiddens) - local_num_prune_layers):
             in_hidden = hiddens[i]
-            out_hidden = hiddens[i+num_prune_layers]
+            out_hidden = hiddens[i+local_num_prune_layers]
             if angular:
                 # use only last token for angular distance as described in section 3.2
                 # https://arxiv.org/pdf/2403.17887.pdf
@@ -97,11 +95,11 @@ def compute_bi(
 
             compute_bi_hiddens(hiddens=hiddens)
     
-    if angular:
-        start_layer = np.argsort(np.array(layer_importances[:-num_prune_layers+1]))[0]
-        layers_to_remove = list(range(start_layer, start_layer + num_prune_layers))
-    else:
-        layers_to_remove = np.argsort(np.array(layer_importances))[:num_prune_layers].tolist()
+    # if angular:
+    #     start_layer = np.argsort(np.array(layer_importances[:-num_prune_layers+1]))[0]
+    #     layers_to_remove = list(range(start_layer, start_layer + num_prune_layers))
+    # else:
+    layers_to_remove = np.argsort(np.array(layer_importances))[:num_prune_layers].tolist()
     
     return layer_importances, layers_to_remove
 
@@ -129,8 +127,7 @@ def remove_layers(model, layers_to_remove: Optional[List[int]] = [], layer_impor
         raise NotImplementedError("lack layers_to_remove")
 
 if __name__ == "__main__":
-    model_name = 'meta-llama/Llama-2-7b-hf' #  meta-llama/Llama-3.1-8B mistralai/Mistral-7B-v0.3 meta-llama/Llama-2-7b-hf
-    
+    model_name = 'meta-llama/Llama-2-7b-hf' #  mistralai/Mistral-7B-v0.3  meta-llama/Llama-3.1-8B
     model = AutoModelForCausalLM.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
@@ -140,24 +137,18 @@ if __name__ == "__main__":
     model.to(device=device)
     model.eval()
 
-    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, metric="normalized_combo", calibration_dataloader=calibration_dataloader, device=device)
+    layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=True, metric="angular_mse_combo", calibration_dataloader=calibration_dataloader, device=device)
 
     all_layers_removal_order = np.argsort(np.array(layer_importances)).tolist()
     print(f"All layers removal order: {','.join(map(str, all_layers_removal_order))}")
 
-    remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=False)
+    remove_layers(model=model, layers_to_remove=layers_to_remove, layer_importances=layer_importances, angular=True)
 
     print(f"remove layers: {layers_to_remove}")
-    print(model)
-    
-    # Update model config to reflect the actual number of layers after pruning
-    original_num_layers = model.config.num_hidden_layers
-    new_num_layers = original_num_layers - num_prune_layers
-    model.config.num_hidden_layers = new_num_layers
-    print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")
+    # print(model)
     
     model_name = model_name.replace('/', '-')
-    model.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
-    tokenizer.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}')
+    model.save_pretrained(f'{model_name}_uidl_mse_layers{num_prune_layers}')
+    tokenizer.save_pretrained(f'{model_name}_uidl_mse_layers{num_prune_layers}')
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

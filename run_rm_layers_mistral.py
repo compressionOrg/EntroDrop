@@ -22,17 +22,7 @@ if __name__ == "__main__":
     parser.add_argument('--layers_order', type=str, 
                        default="29,30,28,27,24,16,14,25,13,20,21,19,23,17,22,26,15,9,7,12,4,6,1,3,5,11,0,8,2,10,18,31",
                        help='Comma-separated list of layer indices to remove (in priority order)')
-    parser.add_argument('--tasks', type=str, 
-                       default="mathqa,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa,boolq",
-                       help='Comma-separated list of evaluation tasks')
-    parser.add_argument('--eval_ppl', type=str, 
-                       default="wikitext2,ptb",
-                       help='Comma-separated list of perplexity evaluation datasets')
     parser.add_argument('--log_file', type=str, default=None, help='Path to log file for saving program output')
-    parser.add_argument('--model_name', type=str, default='meta-llama/Llama-3.1-8B',
-                        choices=['meta-llama/Llama-3.1-8B', 'meta-llama/Llama-2-7b-hf', 
-                                'mistralai/Mistral-7B-v0.3', 'baichuan-inc/Baichuan2-7B-Base'],
-                        help='Model name to use for layer removal (default: meta-llama/Llama-3.1-8B)')
     args = parser.parse_args()
 
     # Set up logger
@@ -53,7 +43,7 @@ if __name__ == "__main__":
         logger.addHandler(file_handler)
 
 
-    model_name = args.model_name
+    model_name = 'mistralai/Mistral-7B-v0.3'
     logger.info(f"Loading model: {model_name}")
     
     model = AutoModelForCausalLM.from_pretrained(
@@ -86,4 +76,4 @@ if __name__ == "__main__":
     logger.info("=" * 100)
 
 
-    result = evaluate_model(model, tokenizer, model_name="llama3", tasks=args.tasks, eval_ppl=args.eval_ppl, device=device, log_file=args.log_file)
+    result = evaluate_model(model, tokenizer, model_name="llama3", tasks="mathqa,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa,boolq", eval_ppl="wikitext2,ptb", device=device, log_file=args.log_file) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

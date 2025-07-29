@@ -37,7 +37,7 @@ def main():
     args = parse_args()
 
     if args.hf:
-        model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path)
+        model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path, device_map="auto")
     else:
         model = torch.load(args.model_path)
     

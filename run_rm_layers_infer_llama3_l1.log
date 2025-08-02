@@ -1,0 +1,131 @@
+2025-07-29 16:04:22,488 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-29 16:04:34,542 - __main__ - INFO - Original model parameters: 8.03B (8,030,261,248)
+2025-07-29 16:04:34,542 - __main__ - INFO - Layers order: 24,25,23,22,20,26,19,21,27,18,28,17,10,11,16,13,14,15,9,12,8,29,7,3,6,2,4,5,1,30,0,31
+2025-07-29 16:04:34,542 - __main__ - INFO - Num prune: 4
+2025-07-29 16:04:34,543 - __main__ - INFO - Layers to remove: [24, 25, 23, 22]
+2025-07-29 16:04:34,544 - __main__ - INFO - Pruned model parameters: 7.16B (7,157,813,248)
+2025-07-29 16:04:34,544 - __main__ - INFO - Parameters reduced: 0.87B (872,448,000)
+2025-07-29 16:04:34,544 - __main__ - INFO - Pruning ratio: 10.86%
+2025-07-29 16:04:34,544 - __main__ - INFO - ====================================================================================================
+Total Params: 8030261248 || Compressed Params: 7157813248 || Compression Ratio: 0.109
+2025-07-29 16:06:59,270 - __main__ - INFO -
+Running inference efficiency evaluation on pruned model...
+Token indices sequence length is longer than the specified maximum sequence length for this model (289077 > 131072). Running this sequence through the model will result in indexing errors
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_ma
+sk` to obtain reliable results.
+Starting from v4.46, the `logits` model output will have the same type as the model (except at train time, where it will always be FP32)
+time: 273.570778131485
+time: 322.85040950775146
+time: 322.79012751579285
+time: 321.7355191707611
+time: 326.80852127075195
+time: 320.2027304172516
+time: 323.3648564815521
+time: 322.72606921195984
+time: 321.23627257347107
+time: 319.36630606651306
+Total Memory: 32.32861137390137 GB
+Weight Memory: 28.29002285003662 GB
+Activation Memory: 4.03040885925293 GB
+Throughput: 103.21762583217945 tokens/sec
+Running inference efficiency evaluation on pruned model...
+2025-07-29 17:15:45,763 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-29 17:15:53,612 - __main__ - INFO - Original model parameters: 8.03B (8,030,261,248)
+2025-07-29 17:15:53,612 - __main__ - INFO - Layers order: 24,25,23,22,20,26,19,21,27,18,28,17,10,11,16,13,14,15,9,12,8,29,7,3,6,2,4,5,1,30,0,31
+2025-07-29 17:15:53,612 - __main__ - INFO - Num prune: 6
+2025-07-29 17:15:53,613 - __main__ - INFO - Layers to remove: [24, 25, 23, 22, 20, 26]
+2025-07-29 17:15:53,613 - __main__ - INFO - Pruned model parameters: 6.72B (6,721,589,248)
+2025-07-29 17:15:53,613 - __main__ - INFO - Parameters reduced: 1.31B (1,308,672,000)
+2025-07-29 17:15:53,614 - __main__ - INFO - Pruning ratio: 16.30%
+2025-07-29 17:15:53,614 - __main__ - INFO - ====================================================================================================
+2025-07-29 17:15:53,614 - __main__ - INFO - Starting inference efficiency evaluation...
+2025-07-29 17:15:53,614 - __main__ - INFO - ==================================================
+2025-07-29 17:15:53,614 - __main__ - INFO - Compression ratio analysis:
+2025-07-29 17:15:53,615 - __main__ - INFO - 
+Running inference efficiency evaluation on pruned model...
+2025-07-29 18:03:39,704 - __main__ - INFO - Total Memory: 31.265332221984863 GB
+2025-07-29 18:03:39,704 - __main__ - INFO - Weight Memory: 27.47749137878418 GB
+2025-07-29 18:03:39,704 - __main__ - INFO - Activation Memory: 3.779661178588867 GB
+2025-07-29 18:03:39,704 - __main__ - INFO - Throughput: 114.41427689446877 tokens/sec
+2025-07-29 18:03:51,403 - __main__ - INFO - Inference efficiency evaluation completed.
+2025-07-29 18:03:51,403 - __main__ - INFO - ==================================================
+2025-07-29 18:03:55,841 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-29 18:04:04,300 - __main__ - INFO - Original model parameters: 8.03B (8,030,261,248)
+2025-07-29 18:04:04,300 - __main__ - INFO - Layers order: 24,25,23,22,20,26,19,21,27,18,28,17,10,11,16,13,14,15,9,12,8,29,7,3,6,2,4,5,1,30,0,31
+2025-07-29 18:04:04,300 - __main__ - INFO - Num prune: 8
+2025-07-29 18:04:04,301 - __main__ - INFO - Layers to remove: [24, 25, 23, 22, 20, 26, 19, 21]
+2025-07-29 18:04:04,302 - __main__ - INFO - Pruned model parameters: 6.29B (6,285,365,248)
+2025-07-29 18:04:04,302 - __main__ - INFO - Parameters reduced: 1.74B (1,744,896,000)
+2025-07-29 18:04:04,302 - __main__ - INFO - Pruning ratio: 21.73%
+2025-07-29 18:04:04,302 - __main__ - INFO - ====================================================================================================
+2025-07-29 18:04:04,302 - __main__ - INFO - Starting inference efficiency evaluation...
+2025-07-29 18:04:04,302 - __main__ - INFO - ==================================================
+2025-07-29 18:04:04,302 - __main__ - INFO - Compression ratio analysis:
+2025-07-29 18:04:04,303 - __main__ - INFO - 
+Running inference efficiency evaluation on pruned model...
+2025-07-29 18:47:38,093 - __main__ - INFO - Total Memory: 30.20254135131836 GB
+2025-07-29 18:47:38,093 - __main__ - INFO - Weight Memory: 26.66495990753174 GB
+2025-07-29 18:47:38,093 - __main__ - INFO - Activation Memory: 3.5294017791748047 GB
+2025-07-29 18:47:38,093 - __main__ - INFO - Throughput: 125.46238117318585 tokens/sec
+2025-07-29 18:47:48,811 - __main__ - INFO - Inference efficiency evaluation completed.
+2025-07-29 18:47:48,811 - __main__ - INFO - ==================================================
+2025-07-29 18:47:53,145 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-29 18:48:00,735 - __main__ - INFO - Original model parameters: 8.03B (8,030,261,248)
+2025-07-29 18:48:00,735 - __main__ - INFO - Layers order: 24,25,23,22,20,26,19,21,27,18,28,17,10,11,16,13,14,15,9,12,8,29,7,3,6,2,4,5,1,30,0,31
+2025-07-29 18:48:00,735 - __main__ - INFO - Num prune: 10
+2025-07-29 18:48:00,735 - __main__ - INFO - Layers to remove: [24, 25, 23, 22, 20, 26, 19, 21, 27, 18]
+2025-07-29 18:48:00,736 - __main__ - INFO - Pruned model parameters: 5.85B (5,849,141,248)
+2025-07-29 18:48:00,736 - __main__ - INFO - Parameters reduced: 2.18B (2,181,120,000)
+2025-07-29 18:48:00,736 - __main__ - INFO - Pruning ratio: 27.16%
+2025-07-29 18:48:00,736 - __main__ - INFO - ====================================================================================================
+2025-07-29 18:48:00,736 - __main__ - INFO - Starting inference efficiency evaluation...
+2025-07-29 18:48:00,736 - __main__ - INFO - ==================================================
+2025-07-29 18:48:00,736 - __main__ - INFO - Compression ratio analysis:
+2025-07-29 18:48:00,738 - __main__ - INFO - 
+Running inference efficiency evaluation on pruned model...
+2025-07-29 19:29:17,274 - __main__ - INFO - Total Memory: 29.139811515808105 GB
+2025-07-29 19:29:17,274 - __main__ - INFO - Weight Memory: 25.852428436279297 GB
+2025-07-29 19:29:17,274 - __main__ - INFO - Activation Memory: 3.279203414916992 GB
+2025-07-29 19:29:17,274 - __main__ - INFO - Throughput: 132.40977405376614 tokens/sec
+2025-07-29 19:29:27,016 - __main__ - INFO - Inference efficiency evaluation completed.
+2025-07-29 19:29:27,016 - __main__ - INFO - ==================================================
+2025-07-29 19:29:31,183 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-29 19:29:39,176 - __main__ - INFO - Original model parameters: 8.03B (8,030,261,248)
+2025-07-29 19:29:39,176 - __main__ - INFO - Layers order: 24,25,23,22,20,26,19,21,27,18,28,17,10,11,16,13,14,15,9,12,8,29,7,3,6,2,4,5,1,30,0,31
+2025-07-29 19:29:39,176 - __main__ - INFO - Num prune: 12
+2025-07-29 19:29:39,177 - __main__ - INFO - Layers to remove: [24, 25, 23, 22, 20, 26, 19, 21, 27, 18, 28, 17]
+2025-07-29 19:29:39,178 - __main__ - INFO - Pruned model parameters: 5.41B (5,412,917,248)
+2025-07-29 19:29:39,178 - __main__ - INFO - Parameters reduced: 2.62B (2,617,344,000)
+2025-07-29 19:29:39,178 - __main__ - INFO - Pruning ratio: 32.59%
+2025-07-29 19:29:39,178 - __main__ - INFO - ====================================================================================================
+2025-07-29 19:29:39,178 - __main__ - INFO - Starting inference efficiency evaluation...
+2025-07-29 19:29:39,178 - __main__ - INFO - ==================================================
+2025-07-29 19:29:39,178 - __main__ - INFO - Compression ratio analysis:
+2025-07-29 19:29:39,179 - __main__ - INFO - 
+Running inference efficiency evaluation on pruned model...
+2025-07-29 20:07:25,148 - __main__ - INFO - Total Memory: 28.076745986938477 GB
+2025-07-29 20:07:25,148 - __main__ - INFO - Weight Memory: 25.039896965026855 GB
+2025-07-29 20:07:25,148 - __main__ - INFO - Activation Memory: 3.0286693572998047 GB
+2025-07-29 20:07:25,148 - __main__ - INFO - Throughput: 144.7921367225745 tokens/sec
+2025-07-29 20:07:34,426 - __main__ - INFO - Inference efficiency evaluation completed.
+2025-07-29 20:07:34,427 - __main__ - INFO - ==================================================
+2025-07-29 20:16:14,158 - __main__ - INFO - Loading model: meta-llama/Llama-3.1-8B
+2025-07-29 20:16:23,844 - __main__ - INFO - Original model parameters: 8.03B (8,030,261,248)
+2025-07-29 20:16:23,844 - __main__ - INFO - Layers order: 24,25,23,22,20,26,19,21,27,18,28,17,10,11,16,13,14,15,9,12,8,29,7,3,6,2,4,5,1,30,0,31
+2025-07-29 20:16:23,844 - __main__ - INFO - Num prune: 6
+2025-07-29 20:16:23,845 - __main__ - INFO - Layers to remove: [24, 25, 23, 22, 20, 26]
+2025-07-29 20:16:23,845 - __main__ - INFO - Pruned model parameters: 6.72B (6,721,589,248)
+2025-07-29 20:16:23,845 - __main__ - INFO - Parameters reduced: 1.31B (1,308,672,000)
+2025-07-29 20:16:23,845 - __main__ - INFO - Pruning ratio: 16.30%
+2025-07-29 20:16:23,845 - __main__ - INFO - ====================================================================================================
+2025-07-29 20:16:23,845 - __main__ - INFO - Starting inference efficiency evaluation...
+2025-07-29 20:16:23,846 - __main__ - INFO - ==================================================
+2025-07-29 20:16:23,846 - __main__ - INFO - Compression ratio analysis:
+2025-07-29 20:16:23,847 - __main__ - INFO - 
+Running inference efficiency evaluation on original model...
+2025-07-29 21:12:30,206 - __main__ - INFO - Total Memory: 32.01673603057861 GB
+2025-07-29 21:12:30,206 - __main__ - INFO - Weight Memory: 27.47749137878418 GB
+2025-07-29 21:12:30,206 - __main__ - INFO - Activation Memory: 4.531064987182617 GB
+2025-07-29 21:12:30,206 - __main__ - INFO - Throughput: 97.4029694570923 tokens/sec
+2025-07-29 21:12:39,716 - __main__ - INFO - 
+Running inference efficiency evaluation on pruned model...

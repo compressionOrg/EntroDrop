@@ -129,13 +129,13 @@ def remove_layers(model, layers_to_remove: Optional[List[int]] = [], layer_impor
         raise NotImplementedError("lack layers_to_remove")
 
 if __name__ == "__main__":
-    model_name = 'meta-llama/Llama-2-7b-hf' #  meta-llama/Llama-3.1-8B mistralai/Mistral-7B-v0.3 meta-llama/Llama-2-7b-hf
+    model_name = 'meta-llama/Llama-3.1-8B' #  meta-llama/Llama-3.1-8B mistralai/Mistral-7B-v0.3 meta-llama/Llama-2-7b-hf
     
     model = AutoModelForCausalLM.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
     device = "cuda:0"
-    num_prune_layers = 9
+    num_prune_layers = 12
     calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=512, batch_size=1, seq_len=2048, padding="max_length")
     model.to(device=device)
     model.eval()

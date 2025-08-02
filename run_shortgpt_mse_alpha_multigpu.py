@@ -30,15 +30,15 @@ def block_influence(
 
     if metric == "normalized_combo":
         # MSE part
-        l1 = torch.mean(torch.abs(input_hidden_state_flat - output_hidden_state_flat), dim=-1)
-        l1_norm = torch.sigmoid(l1)
+        mse = torch.mean((input_hidden_state_flat - output_hidden_state_flat) ** 2, dim=-1)
+        mse_norm = torch.sigmoid(mse)
 
         # Cosine similarity part
         sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
         cos_sim_term = 1 - sim
         cos_sim_term_norm = cos_sim_term / 2.0  # Scale from [0, 2] to [0, 1]
 
-        return alpha * l1_norm + (1 - alpha) * cos_sim_term_norm
+        return alpha * mse_norm + (1 - alpha) * cos_sim_term_norm
 
     # Original logic for cosine and angular, refactored for efficiency
     sim = F.cosine_similarity(input_hidden_state_flat, output_hidden_state_flat, dim=-1).nan_to_num(nan=0.5)
@@ -90,12 +90,16 @@ def compute_bi(
     if hiddens is not None:
         compute_bi_hiddens(hiddens=hiddens)
     else:
+        # 获取模型的第一个参数所在设备，用于多GPU环境下的设备检测
+        model_device = next(model.parameters()).device
+        
         for batch in tqdm(calibration_dataloader, desc="Compute BI", total=len(calibration_dataloader), leave=True):
             if len(batch) == 2:
                 attention_mask = None
             else:
-                attention_mask = batch["attention_mask"].to(device=device)
-            input_ids = batch["input_ids"].to(device=device)
+                # 将数据移动到模型所在的设备（对于多GPU模型，通常是第一个GPU）
+                attention_mask = batch["attention_mask"].to(device=model_device)
+            input_ids = batch["input_ids"].to(device=model_device)
             outputs = model(input_ids=input_ids, attention_mask=attention_mask, use_cache=False, output_hidden_states=True, return_dict=True)
             hiddens = outputs.hidden_states
 
@@ -134,22 +138,45 @@ def remove_layers(model, layers_to_remove: Optional[List[int]] = [], layer_impor
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run ShortGPT with MSE and alpha parameter')
-    parser.add_argument('--alpha', type=float, default=0.5, help='Weight factor for MSE term (default: 0.5)')
+    parser.add_argument('--alpha', type=float, default=0.8, help='Weight factor for MSE term (default: 0.5)')
     parser.add_argument('--model_name', type=str, default='meta-llama/Llama-3.1-8B', 
-                       help='Model name or path (default: baichuan-inc/Baichuan2-7B-Base). Options: meta-llama/Llama-3.1-8B, mistralai/Mistral-7B-v0.3, meta-llama/Llama-2-7b-hf, baichuan-inc/Baichuan2-7B-Base')
+                        help='Model name to use for pruning (default: baichuan-inc/Baichuan2-7B-Base)') # meta-llama/Llama-3.1-8B', 'mistralai/Mistral-7B-v0.3',  'meta-llama/Llama-2-7b-hf', 'baichuan-inc/Baichuan2-7B-Base'
     parser.add_argument('--save_model', action='store_true', help='Whether to save the pruned model (default: False)')
     parser.add_argument('--num_prune_layers', type=int, default=9, help='Number of layers to prune (default: 9)')
     args = parser.parse_args()
 
+    # 检测可用的GPU数量
+    num_gpus = torch.cuda.device_count()
+    print(f"检测到 {num_gpus} 个GPU")
+    
+    # 配置多GPU设备映射
+    if num_gpus > 1:
+        # 为多GPU环境优化device_map
+        device_map = "auto"  # 让transformers自动分配层到不同GPU
+        print(f"使用多GPU模式，自动分配模型层到 {num_gpus} 个GPU")
+    elif num_gpus == 1:
+        device_map = "cuda:0"
+        print("使用单GPU模式")
+    else:
+        device_map = "cpu"
+        print("未检测到GPU，使用CPU模式")
+    
     model_name = args.model_name
-    model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, device_map="auto")
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, device_map="auto")
+    # 加载模型时使用优化的device_map配置
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name, 
+        trust_remote_code=True, 
+        device_map=device_map,
+        torch_dtype=torch.float16 if num_gpus > 0 else torch.float32,  # 使用半精度以节省显存
+        low_cpu_mem_usage=True  # 减少CPU内存使用
+    )
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     
     tokenizer.pad_token = tokenizer.eos_token
-    device = "cuda"
+    device = "cuda" if num_gpus > 0 else "cpu"
     num_prune_layers = args.num_prune_layers
     calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=512, batch_size=1, seq_len=2048, padding="max_length")
-    model.to(device=device)
+    # 注意：当使用device_map时，不需要手动调用model.to(device)，因为模型已经分布在指定设备上
     model.eval()
 
     layer_importances, layers_to_remove = compute_bi(model=model, num_prune_layers=num_prune_layers, angular=False, metric="normalized_combo", calibration_dataloader=calibration_dataloader, device=device, alpha=args.alpha)
@@ -162,7 +189,7 @@ if __name__ == "__main__":
     print(f"remove layers: {layers_to_remove}")
     # print(model)
     
-    # Update model config and save model if requested
+    # Update model config to reflect the actual number of layers after pruning
     if args.save_model:
         original_num_layers = model.config.num_hidden_layers
         new_num_layers = original_num_layers - num_prune_layers

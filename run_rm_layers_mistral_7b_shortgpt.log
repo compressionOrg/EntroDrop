@@ -1,0 +1,78 @@
+2025-07-30 10:14:00,839 - __main__ - INFO - Loading model: mistralai/Mistral-7B-v0.3
+2025-07-30 10:14:13,355 - __main__ - INFO - Original model parameters: 7.25B (7,248,023,552)
+2025-07-30 10:14:13,355 - __main__ - INFO - Layers order: 27,26,25,24,23,22,28,29,21,30,20,19,13,17,18,12,15,16,14,11,10,9,8,7,6,3,4,5,2,1,31,0
+2025-07-30 10:14:13,355 - __main__ - INFO - Num prune: 2
+2025-07-30 10:14:13,356 - __main__ - INFO - Layers to remove: [27, 26]
+2025-07-30 10:14:13,356 - __main__ - INFO - Pruned model parameters: 6.81B (6,811,799,552)
+2025-07-30 10:14:13,357 - __main__ - INFO - Parameters reduced: 0.44B (436,224,000)
+2025-07-30 10:14:13,357 - __main__ - INFO - Pruning ratio: 6.02%
+2025-07-30 10:14:13,357 - __main__ - INFO - ====================================================================================================
+2025-07-30 10:14:13,359 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-30 10:16:17,121 - evaluate_grasp - INFO - wikitext2 6.193051338195801
+2025-07-30 10:16:17,122 - evaluate_grasp - INFO - load dataset ptb
+2025-07-30 10:16:54,843 - evaluate_grasp - INFO - ptb 26.41569709777832
+2025-07-30 10:16:58,587 - __main__ - INFO - Loading model: mistralai/Mistral-7B-v0.3
+2025-07-30 10:17:06,814 - __main__ - INFO - Original model parameters: 7.25B (7,248,023,552)
+2025-07-30 10:17:06,815 - __main__ - INFO - Layers order: 27,26,25,24,23,22,28,29,21,30,20,19,13,17,18,12,15,16,14,11,10,9,8,7,6,3,4,5,2,1,31,0
+2025-07-30 10:17:06,815 - __main__ - INFO - Num prune: 4
+2025-07-30 10:17:06,815 - __main__ - INFO - Layers to remove: [27, 26, 25, 24]
+2025-07-30 10:17:06,816 - __main__ - INFO - Pruned model parameters: 6.38B (6,375,575,552)
+2025-07-30 10:17:06,816 - __main__ - INFO - Parameters reduced: 0.87B (872,448,000)
+2025-07-30 10:17:06,816 - __main__ - INFO - Pruning ratio: 12.04%
+2025-07-30 10:17:06,816 - __main__ - INFO - ====================================================================================================
+2025-07-30 10:17:06,818 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-30 10:19:15,443 - evaluate_grasp - INFO - wikitext2 8.25821304321289
+2025-07-30 10:19:15,443 - evaluate_grasp - INFO - load dataset ptb
+2025-07-30 10:19:52,150 - evaluate_grasp - INFO - ptb 31.35988998413086
+2025-07-30 10:19:56,105 - __main__ - INFO - Loading model: mistralai/Mistral-7B-v0.3
+2025-07-30 10:20:04,233 - __main__ - INFO - Original model parameters: 7.25B (7,248,023,552)
+2025-07-30 10:20:04,233 - __main__ - INFO - Layers order: 27,26,25,24,23,22,28,29,21,30,20,19,13,17,18,12,15,16,14,11,10,9,8,7,6,3,4,5,2,1,31,0
+2025-07-30 10:20:04,233 - __main__ - INFO - Num prune: 6
+2025-07-30 10:20:04,234 - __main__ - INFO - Layers to remove: [27, 26, 25, 24, 23, 22]
+2025-07-30 10:20:04,234 - __main__ - INFO - Pruned model parameters: 5.94B (5,939,351,552)
+2025-07-30 10:20:04,234 - __main__ - INFO - Parameters reduced: 1.31B (1,308,672,000)
+2025-07-30 10:20:04,234 - __main__ - INFO - Pruning ratio: 18.06%
+2025-07-30 10:20:04,234 - __main__ - INFO - ====================================================================================================
+2025-07-30 10:20:04,237 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-30 10:22:03,320 - evaluate_grasp - INFO - wikitext2 12.170310020446777
+2025-07-30 10:22:03,320 - evaluate_grasp - INFO - load dataset ptb
+2025-07-30 10:22:38,204 - evaluate_grasp - INFO - ptb 44.395694732666016
+2025-07-30 10:22:41,921 - __main__ - INFO - Loading model: mistralai/Mistral-7B-v0.3
+2025-07-30 10:22:48,845 - __main__ - INFO - Original model parameters: 7.25B (7,248,023,552)
+2025-07-30 10:22:48,846 - __main__ - INFO - Layers order: 27,26,25,24,23,22,28,29,21,30,20,19,13,17,18,12,15,16,14,11,10,9,8,7,6,3,4,5,2,1,31,0
+2025-07-30 10:22:48,846 - __main__ - INFO - Num prune: 8
+2025-07-30 10:22:48,846 - __main__ - INFO - Layers to remove: [27, 26, 25, 24, 23, 22, 28, 29]
+2025-07-30 10:22:48,847 - __main__ - INFO - Pruned model parameters: 5.50B (5,503,127,552)
+2025-07-30 10:22:48,847 - __main__ - INFO - Parameters reduced: 1.74B (1,744,896,000)
+2025-07-30 10:22:48,847 - __main__ - INFO - Pruning ratio: 24.07%
+2025-07-30 10:22:48,847 - __main__ - INFO - ====================================================================================================
+2025-07-30 10:22:48,849 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-30 10:24:41,672 - evaluate_grasp - INFO - wikitext2 42.17803955078125
+2025-07-30 10:24:41,672 - evaluate_grasp - INFO - load dataset ptb
+2025-07-30 10:25:11,608 - evaluate_grasp - INFO - ptb 134.1324920654297
+2025-07-30 10:25:15,285 - __main__ - INFO - Loading model: mistralai/Mistral-7B-v0.3
+2025-07-30 10:25:22,046 - __main__ - INFO - Original model parameters: 7.25B (7,248,023,552)
+2025-07-30 10:25:22,046 - __main__ - INFO - Layers order: 27,26,25,24,23,22,28,29,21,30,20,19,13,17,18,12,15,16,14,11,10,9,8,7,6,3,4,5,2,1,31,0
+2025-07-30 10:25:22,046 - __main__ - INFO - Num prune: 10
+2025-07-30 10:25:22,047 - __main__ - INFO - Layers to remove: [27, 26, 25, 24, 23, 22, 28, 29, 21, 30]
+2025-07-30 10:25:22,048 - __main__ - INFO - Pruned model parameters: 5.07B (5,066,903,552)
+2025-07-30 10:25:22,048 - __main__ - INFO - Parameters reduced: 2.18B (2,181,120,000)
+2025-07-30 10:25:22,048 - __main__ - INFO - Pruning ratio: 30.09%
+2025-07-30 10:25:22,048 - __main__ - INFO - ====================================================================================================
+2025-07-30 10:25:22,049 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-30 10:27:04,897 - evaluate_grasp - INFO - wikitext2 811.3043212890625
+2025-07-30 10:27:04,897 - evaluate_grasp - INFO - load dataset ptb
+2025-07-30 10:27:36,841 - evaluate_grasp - INFO - ptb 1944.2987060546875
+2025-07-30 10:27:40,614 - __main__ - INFO - Loading model: mistralai/Mistral-7B-v0.3
+2025-07-30 10:27:48,645 - __main__ - INFO - Original model parameters: 7.25B (7,248,023,552)
+2025-07-30 10:27:48,645 - __main__ - INFO - Layers order: 27,26,25,24,23,22,28,29,21,30,20,19,13,17,18,12,15,16,14,11,10,9,8,7,6,3,4,5,2,1,31,0
+2025-07-30 10:27:48,645 - __main__ - INFO - Num prune: 12
+2025-07-30 10:27:48,646 - __main__ - INFO - Layers to remove: [27, 26, 25, 24, 23, 22, 28, 29, 21, 30, 20, 19]
+2025-07-30 10:27:48,647 - __main__ - INFO - Pruned model parameters: 4.63B (4,630,679,552)
+2025-07-30 10:27:48,647 - __main__ - INFO - Parameters reduced: 2.62B (2,617,344,000)
+2025-07-30 10:27:48,647 - __main__ - INFO - Pruning ratio: 36.11%
+2025-07-30 10:27:48,647 - __main__ - INFO - ====================================================================================================
+2025-07-30 10:27:48,648 - evaluate_grasp - INFO - load dataset wikitext2
+2025-07-30 10:29:18,811 - evaluate_grasp - INFO - wikitext2 1832.9970703125
+2025-07-30 10:29:18,812 - evaluate_grasp - INFO - load dataset ptb
+2025-07-30 10:29:46,002 - evaluate_grasp - INFO - ptb 2035.30908203125

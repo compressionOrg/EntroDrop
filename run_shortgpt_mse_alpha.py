@@ -134,20 +134,20 @@ def remove_layers(model, layers_to_remove: Optional[List[int]] = [], layer_impor
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run ShortGPT with MSE and alpha parameter')
-    parser.add_argument('--alpha', type=float, default=0.6, help='Weight factor for MSE term (default: 0.5)')
-    parser.add_argument('--model_name', type=str, default='baichuan-inc/Baichuan2-7B-Base', 
-                        choices=['meta-llama/Llama-3.1-8B', 'mistralai/Mistral-7B-v0.3', 
-                                'meta-llama/Llama-2-7b-hf', 'baichuan-inc/Baichuan2-7B-Base'],
-                        help='Model name to use for pruning (default: baichuan-inc/Baichuan2-7B-Base)')
+    parser.add_argument('--alpha', type=float, default=0.8, help='Weight factor for MSE term (default: 0.5)')
+    parser.add_argument('--model_name', type=str, default='meta-llama/Llama-3.1-8B', 
+                        help='Model name to use for pruning (default: baichuan-inc/Baichuan2-7B-Base)') # meta-llama/Llama-3.1-8B', 'mistralai/Mistral-7B-v0.3',  'meta-llama/Llama-2-7b-hf', 'baichuan-inc/Baichuan2-7B-Base'
+    parser.add_argument('--save_model', action='store_true', help='Whether to save the pruned model (default: False)')
+    parser.add_argument('--num_prune_layers', type=int, default=9, help='Number of layers to prune (default: 9)')
     args = parser.parse_args()
 
     model_name = args.model_name
-    model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True)
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_pretrained(model_name, trust_remote_code=True, device_map="auto")
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True, device_map="auto")
     
     tokenizer.pad_token = tokenizer.eos_token
     device = "cuda:0"
-    num_prune_layers = 7
+    num_prune_layers = args.num_prune_layers
     calibration_dataloader = get_calibration_dataloader(dataset_name="wikitext2", tokenizer=tokenizer, num_samples=512, batch_size=1, seq_len=2048, padding="max_length")
     model.to(device=device)
     model.eval()
@@ -163,13 +163,17 @@ if __name__ == "__main__":
     # print(model)
     
     # Update model config to reflect the actual number of layers after pruning
-    # original_num_layers = model.config.num_hidden_layers
-    # new_num_layers = original_num_layers - num_prune_layers
-    # model.config.num_hidden_layers = new_num_layers
-    # print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")    
-    
-    # model_name = model_name.replace('/', '-')
-    # model.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}_alpha{args.alpha}')
-    # tokenizer.save_pretrained(f'{model_name}_shortgpt_mse_layers{num_prune_layers}_alpha{args.alpha}')
+    if args.save_model:
+        original_num_layers = model.config.num_hidden_layers
+        new_num_layers = original_num_layers - num_prune_layers
+        model.config.num_hidden_layers = new_num_layers
+        print(f"Updated num_hidden_layers from {original_num_layers} to {new_num_layers}")
+        
+        model_name = model_name.replace('/', '-')
+        model.save_pretrained(f'{model_name}_shortgpt_l1_layers{num_prune_layers}_alpha{args.alpha}')
+        tokenizer.save_pretrained(f'{model_name}_shortgpt_l1_layers{num_prune_layers}_alpha{args.alpha}')
+        print(f"Model saved to {model_name}_shortgpt_l1_layers{num_prune_layers}_alpha{args.alpha}")
+    else:
+        print("Model saving skipped (use --save_model to enable).")
 
     # result = evaluate_model(model, tokenizer, model_name="llama", tasks="coqa", eval_ppl="", device=device) # boolq,piqa,hellaswag,winogrande,arc_easy,arc_challenge,openbookqa

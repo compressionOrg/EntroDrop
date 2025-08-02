@@ -16,8 +16,34 @@ import argparse
 import logging
 import sys
 
+def count_parameters(model):
+    """计算模型的参数量
+    
+    Args:
+        model: PyTorch模型
+        
+    Returns:
+        int: 模型的总参数量
+    """
+    return sum(p.numel() for p in model.parameters())
+
+def format_parameters(param_count):
+    """将参数量格式化为以B为单位的字符串
+    
+    Args:
+        param_count (int): 参数数量
+        
+    Returns:
+        str: 格式化后的参数量字符串
+    """
+    return f"{param_count / 1e9:.2f}B"
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('--model_name', type=str, default='meta-llama/Llama-3.1-8B',
+                    choices=['meta-llama/Llama-3.1-8B', 'meta-llama/Llama-2-7b-hf', 
+                            'mistralai/Mistral-7B-v0.3', 'baichuan-inc/Baichuan2-7B-Base'],
+                    help='Model name to use for layer removal (default: meta-llama/Llama-3.1-8B)')
     parser.add_argument('--num_prune', type=int, default=7, help='Number of layers to prune')
     parser.add_argument('--layers_order', type=str, 
                        default="29,30,28,27,24,16,14,25,13,20,21,19,23,17,22,26,15,9,7,12,4,6,1,3,5,11,0,8,2,10,18,31",
@@ -29,10 +55,7 @@ if __name__ == "__main__":
                        default="wikitext2,ptb",
                        help='Comma-separated list of perplexity evaluation datasets')
     parser.add_argument('--log_file', type=str, default=None, help='Path to log file for saving program output')
-    parser.add_argument('--model_name', type=str, default='meta-llama/Llama-3.1-8B',
-                        choices=['meta-llama/Llama-3.1-8B', 'meta-llama/Llama-2-7b-hf', 
-                                'mistralai/Mistral-7B-v0.3', 'baichuan-inc/Baichuan2-7B-Base'],
-                        help='Model name to use for layer removal (default: meta-llama/Llama-3.1-8B)')
+
     args = parser.parse_args()
 
     # Set up logger
@@ -66,6 +89,10 @@ if __name__ == "__main__":
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     
+    # 计算原始模型参数量
+    original_param_count = count_parameters(model)
+    logger.info(f"Original model parameters: {format_parameters(original_param_count)} ({original_param_count:,})")
+    
     logger.info(f"Layers order: {args.layers_order}")
     logger.info(f"Num prune: {args.num_prune}")
     
@@ -83,6 +110,14 @@ if __name__ == "__main__":
             logger.warning(f"layer {layer_idx} does not exist, function may have already been called")
     
     logger.info(f"Layers to remove: {layers_to_remove}")
+    
+    # 计算剪枝后模型参数量
+    pruned_param_count = count_parameters(model)
+    pruning_ratio = (original_param_count - pruned_param_count) / original_param_count * 100
+    
+    logger.info(f"Pruned model parameters: {format_parameters(pruned_param_count)} ({pruned_param_count:,})")
+    logger.info(f"Parameters reduced: {format_parameters(original_param_count - pruned_param_count)} ({original_param_count - pruned_param_count:,})")
+    logger.info(f"Pruning ratio: {pruning_ratio:.2f}%")
     logger.info("=" * 100)
 
 
